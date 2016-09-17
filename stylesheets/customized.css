@@ -21,3 +21,11 @@ li {
 li:hover {
     background-color: #111;
 }
+
+/* responsive design*/
+
+@media (max-width: 497px) {
+	li{
+		width: 50%;
+	}
+}
