@@ -2,8 +2,7 @@ window.onload = function(){
 	// get all li tags
 	var lis = document.getElementsByTagName('li');
 
-	// get target element
-	var target = document.getElementById('main_content_wrap');
+
 
 	// looping through all  li tags listen click event
 	for(var i = 0; i<lis.length; i++){
@@ -15,7 +14,14 @@ window.onload = function(){
 }
 
 function startShow(obj){
-	alert(this.name);
-	console.log(this.name);
+	// get target element
+	var target = document.getElementById('main_content_wrap');
+	if(obj.innerHTML == "Home"){
+		target.innerHTML = '<object type="text/html" data="home.html" ></object>';
+	}else if(obj.innerHTML == "Contact"){
+		target.innerHTML='<object type="text/html" data="contact.html" ></object>';
+	}else if(obj.innerHTML == "News"){
+		target.innerHTML='<object type="text/html" data="news.html" ></object>';
+	} 
 
 }
