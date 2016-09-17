@@ -383,7 +383,10 @@ Small Device Styles
     display: none;
   }
 
-
+  .inner {
+    min-width: 320px;
+    max-width: 10%;
+  }
 
   #project_title {
   font-size: 32px;
