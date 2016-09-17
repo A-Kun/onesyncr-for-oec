@@ -26,6 +26,6 @@ li:hover {
 
 @media (max-width: 497px) {
 	li{
-		width: 50%;
+		width: 100%;
 	}
 }
