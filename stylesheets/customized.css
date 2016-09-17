@@ -13,7 +13,7 @@ li {
     display: block;
     color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 16px 16px;
     text-decoration: none;
 }
 
@@ -27,5 +27,8 @@ li:hover {
 @media (max-width: 497px) {
 	li{
 		width: 100%;
+		font-size: 20px;
+		text-align: center;
+		margin-left:-20px;
 	}
 }
