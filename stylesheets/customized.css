@@ -5,12 +5,24 @@ ul {
     overflow: hidden;
     background-color: #333;
 }
-#logo{
-    float:left;
+
+#logo {
+    float: left;
+    width: 96px;
+    height: 96px;
+    border-radius: 150px;
+    -webkit-border-radius: 150px;
+    -moz-border-radius: 150px;
+    background: url(../images/logo.png) no-repeat;
+}
+
+#title {
+    padding-top: 16px;
+    padding-left: 128px;
 }
 
 li {
-	float: left;
+    float: left;
     display: block;
     color: white;
     text-align: center;
