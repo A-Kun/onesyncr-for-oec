@@ -38,6 +38,9 @@ object{
     height:600px;
     width:100%;
 }
+table, th, td {
+   border: 1px solid black;
+}
 
 /* responsive design*/
 
