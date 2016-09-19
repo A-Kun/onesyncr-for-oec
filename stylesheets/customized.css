@@ -57,3 +57,12 @@ table, th, td {
     }
 
 }
+
+.quote:before {
+    content: url(../images/quotation-mark-left.png);
+}
+
+.quote:after {
+    content: url(../images/quotation-mark-right.png);
+    vertical-align: -100%;
+}
