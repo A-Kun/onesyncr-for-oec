@@ -1,21 +1,43 @@
 <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/customized.css">
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
 <h3>We are TEAM Hortons!</h3>
-<table border = "3" cellpadding="5">
+<table border="3" cellpadding="5">
   <tr>
     <td>
-      <img src="images/team01.jpg" width="320px" height="240px" title="Our team photo (which was taken right after the tutorial)">
+      <a href="#img-popup-1" data-rel="popup" data-position-to="window">
+        <img src="images/team01.jpg" width="320px" height="240px" title="[Click to enlarge] Our team photo (which was taken right after the tutorial)">
+      </a>
+      <div data-role="popup" id="img-popup-1">
+        <p>Our team photo (which was taken right after the tutorial)</p>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <img src="images/team01.jpg" style="width:800px;height:600px;">
+      </div>
     </td>
 
     <td>
-      <img src="images/team02.jpg" width="320px" height="240px" title="Our team sharing Starbucks Coffee and initiating a discussion">
+      <a href="#img-popup-2" data-rel="popup" data-position-to="window">
+        <img src="images/team02.jpg" width="320px" height="240px" title="[Click to enlarge] Our team sharing Starbucks Coffee and initiating a discussion">
+      </a>
+      <div data-role="popup" id="img-popup-2">
+        <p>Our team sharing Starbucks Coffee and initiating a discussion</p>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <img src="images/team02.jpg" style="width:800px;height:600px;">
+      </div>
     </td>
   </tr>
 </table>
 
-<h3>Team's Objectives: Sharing ideas, coding and having fun together to acheive a great outcome.</h3>
+<h3>Team's Objectives:</h3>
+<ul>
+  <li>
+     Sharing ideas, coding and having fun together to acheive a great outcome.
+  </li>
+</ul>
 
-<h3>Team's Strengths: </h3>
+<h3>Team's Strengths:</h3>
 <ul>
   <li>
     Maintaining timely communication.
@@ -61,7 +83,7 @@
 
       <td width="400px">
         <div class="quote">
-          Rose Gao is a third-year management and information technology student in the University of Toronto of Scarborough. She is a quick learner, logical thinker and a science geek. Her passion in math and algorithms drives her goal to become a developer in the field of machine learning. Previously, she worked as a Graphic Designer and a Multimedia Assistant in the Residence Digital Team doing website design and having fun with her fellow workers. Now she is working as a teacher assistant for Introduction to Programming, trying to help her students as well as herself become worthy programmers. With a great deal of help from her teammates, she finished an Android based flight booking application last year. Now she is trying her best to make a great application to meet her client's expectations for the CSCC01 project.
+          Rose Gao is a third-year management and information technology student in the University of Toronto Scarborough. She is a quick learner, logical thinker and a science geek. Her passion in math and algorithms drives her goal to become a developer in the field of machine learning. Previously, she worked as a Graphic Designer and a Multimedia Assistant in the Residence Digital Team doing website design and having fun with her fellow workers. Now she is working as a teacher assistant for Introduction to Programming, trying to help her students as well as herself become worthy programmers. With a great deal of help from her teammates, she finished an Android based flight booking application last year. Now she is trying her best to make a great application to meet her client's expectations for the CSCC01 project.
       </div>
       </td>
     </tr>
