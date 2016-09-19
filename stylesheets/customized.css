@@ -31,6 +31,10 @@ li {
     text-shadow: none;
 }
 
+#agreement>li {
+    text-align: left;
+}
+
 /* Change the link color to #111 (black) on hover */
 li:hover {
     background-color: #111;
