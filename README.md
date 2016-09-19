@@ -1,2 +1,2 @@
-# Team Project Webpage
-# first clone to your laptop then click on index.html
+# CSCC01 Team Project Webpage
+# Deliverable #1: Please clone this repo then open index.html.
