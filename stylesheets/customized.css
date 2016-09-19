@@ -52,6 +52,8 @@ table, th, td {
 		margin-left:-10%;
 	}
     object{
-        height:1500px;
+        height:2000px;
+        overflow: scroll;
     }
+
 }
