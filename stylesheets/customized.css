@@ -85,12 +85,11 @@ table, th, td {
     column-rule-color: rgb(51, 51, 51);
     perspective-origin: 485px 27px;
     transform-origin: 485px 27px;
-    background: rgb(223, 243, 243) none repeat scroll 0% 0% / auto padding-box border-box;
+    background: rgb(217, 232, 248);
     border-top: 0px solid rgba(0, 0, 0, 0.0980392);
     border-right: 0px solid rgba(0, 0, 0, 0.0980392);
     border-bottom: 0px solid rgba(0, 0, 0, 0.0980392);
     border-left: 15px solid rgba(0, 0, 0, 0.0980392);
-    /*font: normal normal normal normal 16px / 24px raleway;*/
     outline: rgb(51, 51, 51) none 0px;
     padding: 17.5px 17.5px 15px 15px;
 }
