@@ -159,6 +159,7 @@ class Planet:
         self._period = []
         self._periastrontime = []
         self._maximumrvtime = []
+
         self._mass = []
         self._radius = []
         self._temperature = []
@@ -186,6 +187,7 @@ def _get_whole(num):
 def deg_to_dms(deg):
     """(str) -> str
     Convert a string of decimal degrees into a string of DMS.
+    Unit for declination.
     """
 
     # Calculate deg min sec.
@@ -214,7 +216,20 @@ def deg_to_dms(deg):
 def deg_to_hms(deg):
     """(str) -> str
     Convert a string of decmial degrees into a string of HMS.
+    Used for right ascension.
     """
 
-    fh = float(deg) / 15
-    
+
+    fhour = float(deg) / 15
+    hour = int(fhour)
+    fminute = (fhour - hour) * 60
+    minute = int(fminute)
+    fsecond = (fminute - minute) * 60
+    second = int(fsecond)
+
+    # Add 0 if number is in single digit.
+    sH = str(hour) if hour >= 10 else "0" + str(hour)
+    sM = str(minute) if minute >= 10 else "0" + str(minute)
+    sS = str(second) if second >= 10 else "0" + str(second)
+
+    return sH + " " + sM + " " + sS
