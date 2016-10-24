@@ -134,9 +134,32 @@ class Star:
         # Childs
         self._planets = {}
 
-        self._attrkey = ["magB", "magV", "magR", "magI", "magJ", "magH", "magK", "mass", "radius", "temperature", "age", "metallicity", "spectraltype"]
-        self._attrvalue = [self._magB, self._magV, self._magR, self._magI, self._magJ, self._magH, self._magK, self._mass, self._radius, self._temperature, self._age, self._metallicity, self._spectraltype]
-        
+        self._attrkey = ["magB",
+                         "magV",
+                         "magR",
+                         "magI",
+                         "magJ",
+                         "magH",
+                         "magK",
+                         "mass",
+                         "radius",
+                         "temperature",
+                         "age",
+                         "metallicity",
+                         "spectraltype"]
+        self._attrvalue = [self._magB,
+                           self._magV,
+                           self._magR,
+                           self._magI,
+                           self._magJ,
+                           self._magH,
+                           self._magK,
+                           self._mass,
+                           self._radius,
+                           self._temperature,
+                           self._age,
+                           self._metallicity,
+                           self._spectraltype]
 
 
 
@@ -179,8 +202,65 @@ class Planet:
         self._discoveryyear = ""
         self._lastupdate = ""
         self._spinorbitalalignment = ""
-        self._attrkey = ["magB", "magV", "magR", "magI", "magJ", "magH", "magK", "semimajoraxis", "separation", "eccentricity", "periastron", "longitude", "meananomaly", "ascendingnode", "inclination", "impactparameter", "period", "periastrontime", "maxmimumrvtime", "mass", "radius", "temperature", "age", "spectraltype", "discoverymethod", "istransiting", "description", "discoveryyear", "lastupdate", "spinorbitalalignment"]
-        self._attrvalue = [self._magB, self._magV, self._magR, self._magI, self._magJ, self._magH, self._magK, self._semimajoraxis, self._separation, self._eccentricity, self._periastron, self._longitude, self._meananomaly, self._ascendingnode, self._inclination, self._impactparameter, self._period, self._periastrontime, self._maximumrvtime, self._mass, self._radius, self._temperature, self._age, self._spectraltype, self._discoverymethod, self._istransiting, self._description, self._discoveryyear, self._lastupdate, self._spinorbitalalignment]
+        self._attrkey = ["magB",
+                         "magV",
+                         "magR",
+                         "magI",
+                         "magJ",
+                         "magH",
+                         "magK",
+                         "semimajoraxis",
+                         "separation",
+                         "eccentricity",
+                         "periastron",
+                         "longitude",
+                         "meananomaly",
+                         "ascendingnode",
+                         "inclination",
+                         "impactparameter",
+                         "period",
+                         "periastrontime",
+                         "maxmimumrvtime",
+                         "mass", "radius",
+                         "temperature",
+                         "age",
+                         "spectraltype",
+                         "discoverymethod",
+                         "istransiting",
+                         "description",
+                         "discoveryyear",
+                         "lastupdate",
+                         "spinorbitalalignment"]
+        self._attrvalue = [self._magB,
+                           self._magV,
+                           self._magR,
+                           self._magI,
+                           self._magJ,
+                           self._magH,
+                           self._magK,
+                           self._semimajoraxis,
+                           self._separation,
+                           self._eccentricity,
+                           self._periastron,
+                           self._longitude,
+                           self._meananomaly,
+                           self._ascendingnode,
+                           self._inclination,
+                           self._impactparameter,
+                           self._period,
+                           self._periastrontime,
+                           self._maximumrvtime,
+                           self._mass,
+                           self._radius,
+                           self._temperature,
+                           self._age,
+                           self._spectraltype,
+                           self._discoverymethod,
+                           self._istransiting,
+                           self._description,
+                           self._discoveryyear,
+                           self._lastupdate,
+                           self._spinorbitalalignment]
         
 
 def deg_to_dms(deg):
@@ -217,7 +297,6 @@ def deg_to_hms(deg):
     Convert a string of decmial degrees into a string of HMS.
     Used for right ascension.
     """
-
 
     fhour = float(deg) / 15
     hour = int(fhour)
