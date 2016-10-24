@@ -19,7 +19,8 @@ def send_email(from_address, to_address, subject, text):
 if __name__ == "__main__":
     body = """Hi there,
 
-    Here's the update report...
+    The following files were updated:
+
     """
     send_email("Andrew Wang <me@andrewwang.ca>",
                "Andrew Wang <andrewwang963@gmail.com>",
