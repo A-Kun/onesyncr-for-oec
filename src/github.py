@@ -10,7 +10,7 @@ repo = gh.repository("A-Kun", "open_exoplanet_catalogue")
 target_repo = gh.repository("OpenExoplanetCatalogue", "open_exoplanet_catalogue")
 
 def push_file(path, title, content):
-    try:
+    try: # file doesn't exist, create the file
         repo.create_file(path, title, content.encode())
     except github3.models.GitHubError: # file already exists, update the file instead
         response = requests.get("https://api.github.com/repos/A-Kun/open_exoplanet_catalogue/contents/testfile.txt").content
@@ -18,6 +18,7 @@ def push_file(path, title, content):
         repo.update_file(path, title, content.encode(), sha)
 
 def create_pull_request(title):
+    # create a pull request on github
     return target_repo.create_pull(title, "master", "A-Kun:master")
 
 
