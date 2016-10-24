@@ -1,3 +1,6 @@
+EMAIL_RECEIVER = "Andrew Wang <andrewwang963@gmail.com>"
+
+
 print("Downloading CSV files from Exoplanet.eu and NASA... ", end="", flush=True)
 import dlcsv
 print("Done.", flush=True)
@@ -48,9 +51,14 @@ print("\t-> " + str(count_modify) + " files modified.", flush=True)
 
 
 print("Creating pull request... ", end="", flush=True)
-pr = create_pull_request("Update exoplanet systems")
-pr_number = pr.number
-print("Done.", flush=True)
+try:
+    pr = create_pull_request("Update exoplanet systems")
+    pr_number = str(pr.number)
+except github3.models.GitHubError:
+    pr_number = ""
+    print("Pull request already exists.", flush=True)
+else:
+    print("Done.", flush=True)
 
 print("Sending notification email... ", end="", flush=True)
 from mail import *
@@ -62,9 +70,10 @@ The following files were updated:
 for next_file in updated_list:
     body += "\t" + next_file + "\n"
 body += "\nA pull request has been created: https://github.com/poppintk/open_exoplanet_catalogue/pull/"
-body += str(pr.number) + "\n"
+body += pr_number + "\n"
 send_email("Andrew Wang <me@andrewwang.ca>",
-           "Andrew Wang <andrewwang963@gmail.com>",
+           EMAIL_RECEIVER,
            "Update to Open Exoplanet Catelogue",
            body)
-print("Done.")
+print("Done.", flush=True)
+print("An email was sent to " + EMAIL_RECEIVER)
