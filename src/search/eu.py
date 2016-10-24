@@ -17,9 +17,9 @@ def add_system(name, row):
     system._rightascension = oec.deg_to_hms(row["ra"])
 
     # distance & error -/+
-    system._distance = [row["star_distance"],
+    system._distance.extend([row["star_distance"],
                         row["star_distance_error_min"],
-                        row["star_distance_error_max"]]
+                        row["star_distance_error_max"]])
     
     # epoch????
     SYSTEMS[name] = system
@@ -36,40 +36,40 @@ def add_star(system, row):
     star._names.union(set(star_alt_names))
 
     # mass
-    star._mass = [row["star_mass"],
+    star._mass.extend([row["star_mass"],
                   row["star_mass_error_min"],
-                  row["star_mass_error_max"]]
+                  row["star_mass_error_max"]])
 
     # radius
-    star._radius = [row["star_radius"],
+    star._radius.extend([row["star_radius"],
                   row["star_radius_error_min"],
-                  row["star_radius_error_max"]]
+                  row["star_radius_error_max"]])
 
     # temperature
-    star._temperature = [row["star_teff"],
+    star._temperature.extend([row["star_teff"],
                   row["star_teff_error_min"],
-                  row["star_teff_error_max"]]
+                  row["star_teff_error_max"]])
 
     # age
-    star._age = [row["star_age"],
+    star._age.extend([row["star_age"],
                   row["star_age_error_min"],
-                  row["star_age_error_max"]]
+                  row["star_age_error_max"]])
 
     # metallicity
-    star._metallicity = [row["star_metallicity"],
+    star._metallicity.extend([row["star_metallicity"],
                   row["star_metallicity_error_min"],
-                  row["star_metallicity_error_max"]]
+                  row["star_metallicity_error_max"]])
 
     # spectraltype ???
     star._spectraltype = []
 
     # magB, magV, magR, magI, magJ, magH, magK
     # missing magB and magR
-    star._magV = row["mag_v"]
-    star._magI = row["mag_i"]
-    star._magJ = row["mag_j"]
-    star._magH = row["mag_h"]
-    star._magK = row["mag_k"]
+    star._magV.extend([row["mag_v"], "", ""])
+    star._magI.extend([row["mag_i"], "", ""])
+    star._magJ.extend([row["mag_j"], "", ""])
+    star._magH.extend([row["mag_h"], "", ""])
+    star._magK.extend([row["mag_k"], "", ""])
 
     # Add star into System.
     system._stars[star_name] = star
@@ -85,14 +85,14 @@ def add_planet(system, row):
     planet._names.union(set(planet_alt_names))
     
     # mass
-    planet._mass = [row["mass"],
+    planet._mass.extend([row["mass"],
                     row["mass_error_min"],
-                    row["mass_error_max"]]
+                    row["mass_error_max"]])
 
     # radius
-    planet._radius = [row["radius"],
+    planet._radius.extend([row["radius"],
                       row["radius_error_min"],
-                      row["radius_error_max"]]
+                      row["radius_error_max"]])
     
     # temperature
     
@@ -101,21 +101,21 @@ def add_planet(system, row):
     # spectraltype
 
     # semimajoraxis
-    planet._semimajoraxix = [row["semi_major_axis"],
+    planet._semimajoraxis.extend([row["semi_major_axis"],
                              row["semi_major_axis_error_min"],
-                             row["semi_major_axis_error_max"]]
+                             row["semi_major_axis_error_max"]])
 
     # seperation
     
     # eccentricity
-    planet._eccentricity = [row["eccentricity"],
+    planet._eccentricity.extend([row["eccentricity"],
                             row["eccentricity_error_min"],
-                            row["eccentricity_error_max"]]
+                            row["eccentricity_error_max"]])
     
     # periastron
-    planet._periastron = [row["omega"],
+    planet._periastron.extend([row["omega"],
                           row["omega_error_min"],
-                          row["omega_error_max"]]
+                          row["omega_error_max"]])
     
     # longitude
     
@@ -124,21 +124,21 @@ def add_planet(system, row):
     # ascendingnode
     
     # inclination
-    planet._inclination = [row["inclination"],
+    planet._inclination.extend([row["inclination"],
                            row["inclination_error_min"],
-                           row["inclination_error_max"]]
+                           row["inclination_error_max"]])
     
     # impactperameter
     
     # period
-    planet._period = [row["orbital_period"],
+    planet._period.extend([row["orbital_period"],
                       row["orbital_period_error_min"],
-                      row["orbital_period_error_max"]]
+                      row["orbital_period_error_max"]])
     
     # periastrontime
-    planet._periastrontime = [row["tperi"],
+    planet._periastrontime.extend([row["tperi"],
                               row["tperi_error_min"],
-                              row["tperi_error_max"]]
+                              row["tperi_error_max"]])
     
     # maximumrvtime
     
