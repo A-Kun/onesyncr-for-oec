@@ -12,10 +12,12 @@ target_repo = gh.repository("poppintk", "open_exoplanet_catalogue")
 def push_file(path, commit_msg, content):
     try: # file does not exist, create the file
         repo.create_file(path, commit_msg, content.encode())
+        return True
     except github3.models.GitHubError: # file already exists, update the file instead
         response = requests.get(GITHUB_API_BASE_URL + path).content
         sha = json.loads(str(response)[2:-1])["sha"]
         repo.update_file(path, commit_msg, content.encode(), sha)
+        return False
 
 def create_pull_request(title):
     return target_repo.create_pull(title, "master", "A-Kun:master")

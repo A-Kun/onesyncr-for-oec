@@ -2,7 +2,8 @@ import xml.etree.ElementTree as ET
 import shutil
 import os
 
-shutil.rmtree('./systems')
+if os.path.isdir("systems"):
+    shutil.rmtree('./systems')
 os.mkdir("systems")
 
 def indent(elem, level=0):
@@ -20,19 +21,19 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-def generate_xml():
-    for key in SYSTEMS:
+def generate_xml(systems):
+    for key in systems:
         # Output file name
         filename = "systems/" + key + ".xml"
-    
-    
-        sys = SYSTEMS[key]
+
+
+        sys = systems[key]
         system = ET.Element("system")
         ET.SubElement(system, "name").text = key
         ET.SubElement(system, "rightascension").text = sys._rightascension
         ET.SubElement(system, "declination").text = sys._declination
-    
-    
+
+
         for key2 in sys._stars:
             st = sys._stars[key2]
             star = ET.SubElement(system, "star")
@@ -56,25 +57,25 @@ def generate_xml():
             ET.SubElement(star, "age", errorminus=st._age[1], errorplus=st._age[2]).text = st._age[0]
             ET.SubElement(star, "metallicity").text = st._metallicity
             ET.SubElement(star, "spectraltype").text = st._spectraltype
-            
-    
+
+
             if st._magV:
                 if len(st._magV > 1):
                     ET.SubElement(star, "magV", errorminus=st._magV[1], errorplus=st._magV[2]).text = st._magV[0]
                 else:
                     ET.SubElement(star, "magV").text = st._magV[0]
-    
+
             if st._magR:
                 if len(st._magR > 1):
                     ET.SubElement(star, "magR", errorminus=st._magR[1], errorplus=st._magR[2]).text = st._magR[0]
                 else:
                     ET.SubElement(star, "magR").text = st._magR[0]
-    
+
             if st._magI:
                 if len(st._magI > 1):
                     ET.SubElement(star, "magI", errorminus=st._magI[1], errorplus=st._magI[2]).text = st._magI[0]
                 else:
-                    ET.SubElement(star, "magI").text = st._magI[0]           
+                    ET.SubElement(star, "magI").text = st._magI[0]
             if st._magJ:
                 if len(st._magJ > 1):
                     ET.SubElement(star, "magJ", errorminus=st._magJ[1], errorplus=st._magJ[2]).text = st._magJ[0]
@@ -90,8 +91,8 @@ def generate_xml():
                     ET.SubElement(star, "magK", errorminus=st._magK[1], errorplus=st._magK[2]).text = st._magK[0]
                 else:
                     ET.SubElement(star, "magK").text = st._magK[0]"""
-                    
-    
+
+
             for key3 in st._planets:
                 pl = st._planets[key3]
                 planet = ET.SubElement(star, "planet")
@@ -107,7 +108,7 @@ def generate_xml():
                             if isinstance(st._attrvalue[i], list):
                                 ET.SubElement(planet, pl._attrkey[i]).text = pl._attrvalue[i][0]
                             else:
-                                ET.SubElement(planet, pl._attrkey[i]).text = pl._attrvalue[i]       
+                                ET.SubElement(planet, pl._attrkey[i]).text = pl._attrvalue[i]
                 """
                 ET.SubElement(planet, "mass", errorminus=pl._mass[1], errorplus=pl._mass[2]).text = pl._mass[0]
                 ET.SubElement(planet, "radius", errorminus=pl._radius[1], errorplus=pl._radius[2]).text = pl._radius[0]
@@ -118,7 +119,7 @@ def generate_xml():
                 ET.SubElement(planet, "inclination", errorminus=pl._inclination[1], errorplus=pl._inclination[2]).text = pl._inclination[0]
                 ET.SubElement(planet, "period", errorminus=pl._period[1], errorplus=pl._period[2]).text = pl._period[0]
                 ET.SubElement(planet, "periastrontime", errorminus=pl._periastrontime[1], errorplus=pl._periastrontime[2]).text = pl._periastrontime[0]
-                
+
                 ET.SubElement(planet, "discoverymethod").text = pl._discoverymethod
                 ET.SubElement(planet, "discoveryyear").text = pl._discoveryyear
                 ET.SubElement(planet, "lastupdate").text = pl._lastupdate
@@ -132,10 +133,10 @@ if __name__ == "__main__":
         print("Generating xml files from exoplanet.eu...", end="")
         from eu import *
         get_eu()
-        generate_xml()
+        generate_xml(SYSTEMS)
     else:
         print("Generating xml files from NASA Exoplanet Archive...", end="")
         from nasa import *
         get_nasa()
-        generate_xml()
+        generate_xml(SYSTEMS)
     print("done")
