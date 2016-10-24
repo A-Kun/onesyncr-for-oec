@@ -2,14 +2,19 @@ import urllib.request
 import os
 
 # Download csv files.
-# os.mkdir("tmp/")
+
+# Check if temporary directory exists.
+if not os.path.isdir("tmp"):
+    # Create new tmp directory.
+    os.mkdir("tmp/")
 
 
-url = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets"
-
+# NASA EXOPLANET ARCHIVE
+url = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/IceTable/nph-iceTblDownload"
+#url = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets"
 urllib.request.urlretrieve(url, "tmp/nasa.csv")
 
 
+# EXOPLANET.EU
 url2 = "http://exoplanet.eu/catalog/csv/"
-
 urllib.request.urlretrieve(url2, "tmp/eu.csv")

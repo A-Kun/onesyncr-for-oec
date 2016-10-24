@@ -22,10 +22,7 @@ def add_system(name, row):
                         row["star_distance_error_max"]]
     
     # epoch????
-
-
     SYSTEMS[name] = system
-
 
 
 def add_star(system, row):
@@ -162,33 +159,28 @@ def add_planet(system, row):
     system._planets[planet_name] = planet
     system._stars[row["star_name"]]._planets[planet_name] = planet
 
-# Call dlcsv to download csvs
 
-csvfile = open('tmp/eu.csv')
-reader = csv.DictReader(csvfile)
-
-
-for row in reader:
-    system_name = row["star_name"]
-    star_name = row["star_name"]
-    planet_name = row["# name"]
-
-    # Create new system if system does not exit.
-    if system_name not in SYSTEMS:
-        add_system(system_name, row)
-
-    # Create new star if star does not exit.    
-    if star_name not in SYSTEMS[system_name]._stars:
-        add_star(SYSTEMS[system_name], row)
+def get_eu():
+    # Call dlcsv to download csvs
+    csvfile = open('tmp/eu.csv')
+    reader = csv.DictReader(csvfile)
     
     
-    # Create new planet.
-    add_planet(SYSTEMS[system_name], row)
-
-    if row["# name"] == "Kepler-152 b":
-        break
-
-
-for k, v in row.items():
-    print(k, "+++++++++++++++++",  v)
+    for row in reader:
+        system_name = row["star_name"]
+        star_name = row["star_name"]
+        planet_name = row["# name"]
     
+        # Create new system if system does not exit.
+        if system_name not in SYSTEMS:
+            add_system(system_name, row)
+    
+        # Create new star if star does not exit.    
+        if star_name not in SYSTEMS[system_name]._stars:
+            add_star(SYSTEMS[system_name], row)
+    
+        
+        # Create new planet.
+        add_planet(SYSTEMS[system_name], row)
+
+    csvfile.close()

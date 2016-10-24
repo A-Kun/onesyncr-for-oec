@@ -97,15 +97,16 @@ class System:
 
         self._declination = ""
         self._rightascension = ""
-        self._distance = ""
+        self._distance = []
         self._epoch = ""
 
         # Childs
         self._stars = {}
         self._planets = {}
 
+
     def __str__(self):
-        return "Name:{0}\nAlternate Names:{1}\nDeclination:{2}\nRightAscension:{3}\nDistance:{4}\nEpoch:{5}".format(self._name, str(self._names), self._declination, self._rightascension, self._distance, self._epoch)
+        return "Name:{0}\nAlternate Names:{1}\nDeclination:{2}\nRightAscension:{3}\nDistance:{4}\nEpoch:{5}\nStars:{6}\nPlanets:{7}".format(self._name, str(self._names), self._declination, self._rightascension, self._distance, self._epoch, str(self._stars.keys()), str(self._planets.keys()))
 
 
 class Star:
@@ -132,6 +133,10 @@ class Star:
 
         # Childs
         self._planets = {}
+
+        self._attrkey = ["magB", "magV", "magR", "magI", "magJ", "magH", "magK", "mass", "radius", "temperature", "age", "metallicity", "spectraltype"]
+        self._attrvalue = [self._magB, self._magV, self._magR, self._magI, self._magJ, self._magH, self._magK, self._mass, self._radius, self._temperature, self._age, self._metallicity, self._spectraltype]
+        
 
 
 
@@ -174,6 +179,8 @@ class Planet:
         self._discoveryyear = ""
         self._lastupdate = ""
         self._spinorbitalalignment = ""
+        self._attrkey = ["magB", "magV", "magR", "magI", "magJ", "magH", "magK", "semimajoraxis", "separation", "eccentricity", "periastron", "longitude", "meananomaly", "ascendingnode", "inclination", "impactparameter", "period", "periastrontime", "maxmimumrvtime", "mass", "radius", "temperature", "age", "spectraltype", "discoverymethod", "istransiting", "description", "discoveryyear", "lastupdate", "spinorbitalalignment"]
+        self._attrvalue = [self._magB, self._magV, self._magR, self._magI, self._magJ, self._magH, self._magK, self._semimajoraxis, self._separation, self._eccentricity, self._periastron, self._longitude, self._meananomaly, self._ascendingnode, self._inclination, self._impactparameter, self._period, self._periastrontime, self._maximumrvtime, self._mass, self._radius, self._temperature, self._age, self._spectraltype, self._discoverymethod, self._istransiting, self._description, self._discoveryyear, self._lastupdate, self._spinorbitalalignment]
         
 
 def deg_to_dms(deg):
