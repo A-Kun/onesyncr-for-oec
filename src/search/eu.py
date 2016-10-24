@@ -105,8 +105,8 @@ def add_planet(system, row):
 
     # semimajoraxis
     planet._semimajoraxix = [row["semi_major_axis"],
-                             row["semi_major_axis_min"],
-                             row["semi_major_axis_max"]]
+                             row["semi_major_axis_error_min"],
+                             row["semi_major_axis_error_max"]]
 
     # seperation
     
@@ -146,6 +146,7 @@ def add_planet(system, row):
     # maximumrvtime
     
     # discoverymethod
+    planet._discoverymethod = row["detection_type"]
     
     # istransiting
     
@@ -158,6 +159,8 @@ def add_planet(system, row):
     planet._lastupdate = row["updated"]
     
     # spinorbitalalignment
+    system._planets[planet_name] = planet
+    system._stars[row["star_name"]]._planets[planet_name] = planet
 
 # Call dlcsv to download csvs
 
@@ -182,7 +185,6 @@ for row in reader:
     # Create new planet.
     add_planet(SYSTEMS[system_name], row)
 
-    a = (row.keys())
     if row["# name"] == "Kepler-152 b":
         break
 
