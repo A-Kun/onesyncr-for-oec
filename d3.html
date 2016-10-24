@@ -3,7 +3,7 @@
 
   <head>
     <meta charset="utf-8">
-    <title>Deliverable #3 Part 1</title>
+    <title>Deliverable #3</title>
     <style>
       @import 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.2.0/katex.min.css';
       @import 'http://dillinger.io/css/app.css';
@@ -28,10 +28,10 @@
     <h3><a id="What_is_every_team_members_role_9"></a>What is every team member’s role?</h3>
     <ul>
       <li>Andrew Wang: meeting organizer, master branch maintainer, developer</li>
-      <li>Ryan You: developer</li>
-      <li>Rose Gao: proofreader, developer</li>
-      <li>Andrew Huang: developer</li>
-      <li>Wentao Sui: developer</li>
+      <li>Ryan You: full-stack developer</li>
+      <li>Rose Gao: writer, proofreader, developer</li>
+      <li>Andrew Huang: back-end developer</li>
+      <li>Wentao Sui: back-end developer</li>
     </ul>
     <h3><a id="What_tools_if_any_will_you_use_for_communication_17"></a>What tools, if any, will you use for communication?</h3>
     <ul>
@@ -57,18 +57,31 @@
     <img src="images/product-backlog.png" width="1024px"></img>
     <h3>Release Plan</h3>
     <ul>
-      <li>10/24/2016: First working version with update checking, comparing and merging abilities. Detailed tasks shown in the Sprint Plan.</li>
-      <li>11/14/2016: UI will be added in for accept, reject, and edit functionalities.</li>
-      <li>12/01/2016: Major functionalities will include conflict handling and being able to roll back to a previous version.</li>
+      <li>10/24/2016: First working version with update checking, comparing and merging abilities.</li>
+      <img src="images/release-plan-3.png" width="1024px"></img>
+      <li>11/14/2016: UI will be added in for accept, reject functionalities and conflict handling.</li>
+      <img src="images/release-plan-4.png" width="1024px"></img>
+      <li>12/01/2016: Major functionalities will include editing before accepting and being able to roll back to a previous version.</li>
+      <img src="images/release-plan-5.png" width="1024px"></img>
     </ul>
     <h3>Sprint Plan</h3>
     <img src="images/sprint-backlog.png" width="1024px"></img>
-    <img src="images/burn-down-chart.png" width="1024px"></img>
+    <img src="images/d3a-burn-down-chart.png" width="1024px"></img>
+    <h3>Who Is Doing What</h3>
     <ul>
       <li>Ryan You, Andrew Huang, and Wentao Sui are working on crawling, parsing, and comparing data fetched from NASA and exoplanet.eu with OEC.</li>
       <li>Andrew Wang is working on sending out update notification emails.</li>
       <li>Rose Gao is working on creating Github pull requests.</li>
     </ul>
+    <hr/>
+    <h3>Report</h3>
+    <p>To achieve the basic requirements, we first have a crawler to crawl through data from two catalogues. It also generates a report and a data file. Then we have a function that creates a pull request on GitHub, and an email sending function that takes the pull request and the report to send to the user. All data should come with attributions and references, so we have another function to get those from other catalogues. Once the email is received, we have two more functions that lets the administrator choose to accept or reject the merge request on GitHub. We also plan to have an editor, which allows the client to edit the generated data file manually, if he would like, before merging into database. We will also implement a function that identifies the data about the same planet from different catalogues and generates two columns to compare and display the data to the client. We will add extra functionalities to the email sending part if we have time that allows users to change the time of the email being sent and also includes an error report when the program fails to connect the databases. Another function that is nice to have is a button in the email that allows the user to go back to the last version of git.</p>
+    <p>Above is a brief description of our system design. Our project had a smooth transaction from deliverable 2 to deliverable 3. We put our user stories from deliverable 2 into our backlog and have an estimated project velocity of 60 story points(1 story point == 1 dev hour). We followed our plan and finished 39 story points in this sprint. For the one user story that is not finished and some subtasks that do not work yet perfectly we are re-planning them into the next sprint.</p>
+    <h3>Task Board</h3>
+    <img src="images/d3-task-board.png" width="1024px"></img>
+    <h3>Burn-down Chart</h3>
+    <p>(The green "Time Spent" line can be ignored.)</p>
+    <img src="images/d3b-burn-down-chart.png" width="1024px"></img>
   </body>
 
 </html>

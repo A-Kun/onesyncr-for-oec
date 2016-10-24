@@ -7,18 +7,17 @@ GITHUB_API_BASE_URL = "https://api.github.com/repos/A-Kun/open_exoplanet_catalog
 
 gh = login("A-Kun", token="67a91ee33e366d0576f2136c6e4d7c03e44ee6aa")
 repo = gh.repository("A-Kun", "open_exoplanet_catalogue")
-target_repo = gh.repository("OpenExoplanetCatalogue", "open_exoplanet_catalogue")
+target_repo = gh.repository("poppintk", "open_exoplanet_catalogue")
 
-def push_file(path, title, content):
-    try: # file doesn't exist, create the file
-        repo.create_file(path, title, content.encode())
+def push_file(path, commit_msg, content):
+    try: # file does not exist, create the file
+        repo.create_file(path, commit_msg, content.encode())
     except github3.models.GitHubError: # file already exists, update the file instead
-        response = requests.get("https://api.github.com/repos/A-Kun/open_exoplanet_catalogue/contents/testfile.txt").content
+        response = requests.get(GITHUB_API_BASE_URL + path).content
         sha = json.loads(str(response)[2:-1])["sha"]
-        repo.update_file(path, title, content.encode(), sha)
+        repo.update_file(path, commit_msg, content.encode(), sha)
 
 def create_pull_request(title):
-    # create a pull request on github
     return target_repo.create_pull(title, "master", "A-Kun:master")
 
 

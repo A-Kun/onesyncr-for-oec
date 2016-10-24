@@ -21,7 +21,7 @@ function startShow(obj){
 		target.innerHTML='<object type="text/html" data="news.html" ></object>';
 	}else if(obj.innerHTML == "Deliverable #2"){
 		target.innerHTML='<object type="text/html" data="d2.html" ></object>';
-	}else if(obj.innerHTML == "Deliverable #3 part 1"){
-		target.innerHTML='<object type="text/html" data="d3p1.html" ></object>';
+	}else if(obj.innerHTML == "Deliverable #3"){
+		target.innerHTML='<object type="text/html" data="d3.html" ></object>';
 	}
 }
