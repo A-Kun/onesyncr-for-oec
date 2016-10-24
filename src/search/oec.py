@@ -104,7 +104,8 @@ class System:
         self._stars = {}
         self._planets = {}
 
-    
+    def __str__(self):
+        return "Name:{0}\nAlternate Names:{1}\nDeclination:{2}\nRightAscension:{3}\nDistance:{4}\nEpoch:{5}".format(self._name, str(self._names), self._declination, self._rightascension, self._distance, self._epoch)
 
 
 class Star:
@@ -131,6 +132,7 @@ class Star:
 
         # Childs
         self._planets = {}
+
 
 
 class Planet:
@@ -173,16 +175,6 @@ class Planet:
         self._lastupdate = ""
         self._spinorbitalalignment = ""
         
-
-
-
-def _get_whole(num):
-    """(str) -> str
-    Return whole units of a string float.
-    """
-
-    return num.split(".")[0]
-
 
 def deg_to_dms(deg):
     """(str) -> str
