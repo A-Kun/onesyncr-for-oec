@@ -175,14 +175,7 @@ def add_planet(system, row):
 
 def get_nasa():
     # Read until header of file. *** optimize later ***
-    csvfile = open('tmp/nasa2.csv')
-    line = csvfile.readline()
-    while(line.startswith("# ")):
-        line = csvfile.readline()
-    line = csvfile.readline()
-    while(line.startswith("# ")):
-        line = csvfile.readline()
-
+    csvfile = open('tmp/nasa.csv')
     reader = csv.DictReader(csvfile)
     
     for row in reader:

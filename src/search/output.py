@@ -128,7 +128,7 @@ def generate_xml():
 
 
 if __name__ == "__main__":
-    if 1:
+    if 0:
         print("Generating xml files from exoplanet.eu...", end="")
         from eu import *
         get_eu()
