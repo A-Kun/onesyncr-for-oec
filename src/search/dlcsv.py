@@ -10,8 +10,7 @@ if not os.path.isdir("tmp"):
 
 
 # NASA EXOPLANET ARCHIVE
-url = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/IceTable/nph-iceTblDownload"
-#url = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets"
+url="http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets&format=csv&select=*"
 urllib.request.urlretrieve(url, "tmp/nasa.csv")
 
 
