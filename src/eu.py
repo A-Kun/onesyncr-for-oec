@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import csv
 import oec
 
@@ -12,7 +13,7 @@ def add_system(name, row):
 
     # declination
     system._declination = oec.deg_to_dms(row["dec"])
-    
+
     # rightascension
     system._rightascension = oec.deg_to_hms(row["ra"])
 
@@ -20,7 +21,7 @@ def add_system(name, row):
     system._distance.extend([row["star_distance"],
                         row["star_distance_error_min"],
                         row["star_distance_error_max"]])
-    
+
     # epoch????
     SYSTEMS[name] = system
 
@@ -31,7 +32,7 @@ def add_star(system, row):
     star = oec.Star(star_name)
     # alternate names
     star_alt_names = row["star_alternate_names"].split(",")
-    
+
     if "" in star_alt_names: star_alt_names.remove("")
     star._names.union(set(star_alt_names))
 
@@ -83,7 +84,7 @@ def add_planet(system, row):
 
     if "" in planet_alt_names: planet_alt_names.remove("")
     planet._names.union(set(planet_alt_names))
-    
+
     # mass
     planet._mass.extend([row["mass"],
                     row["mass_error_min"],
@@ -93,11 +94,11 @@ def add_planet(system, row):
     planet._radius.extend([row["radius"],
                       row["radius_error_min"],
                       row["radius_error_max"]])
-    
+
     # temperature
     
     # age
-    
+
     # spectraltype
 
     # semimajoraxis
@@ -106,55 +107,55 @@ def add_planet(system, row):
                              row["semi_major_axis_error_max"]])
 
     # seperation
-    
+
     # eccentricity
     planet._eccentricity.extend([row["eccentricity"],
                             row["eccentricity_error_min"],
                             row["eccentricity_error_max"]])
-    
+
     # periastron
     planet._periastron.extend([row["omega"],
                           row["omega_error_min"],
                           row["omega_error_max"]])
-    
+
     # longitude
-    
+
     # meananomaly
-    
+
     # ascendingnode
-    
+
     # inclination
     planet._inclination.extend([row["inclination"],
                            row["inclination_error_min"],
                            row["inclination_error_max"]])
-    
+
     # impactperameter
-    
+
     # period
     planet._period.extend([row["orbital_period"],
                       row["orbital_period_error_min"],
                       row["orbital_period_error_max"]])
-    
+
     # periastrontime
     planet._periastrontime.extend([row["tperi"],
                               row["tperi_error_min"],
                               row["tperi_error_max"]])
-    
+
     # maximumrvtime
-    
+
     # discoverymethod
     planet._discoverymethod = row["detection_type"]
-    
+
     # istransiting
-    
+
     # description
-    
+
     # discoveryyear
     planet._discoveryyear = row["discovered"]
-    
+
     # lastupdate
     planet._lastupdate = row["updated"]
-    
+
     # spinorbitalalignment
     system._planets[planet_name] = planet
     system._stars[row["star_name"]]._planets[planet_name] = planet
@@ -164,22 +165,22 @@ def get_eu():
     # Call dlcsv to download csvs
     csvfile = open('tmp/eu.csv')
     reader = csv.DictReader(csvfile)
-    
-    
+
+
     for row in reader:
         system_name = row["star_name"]
         star_name = row["star_name"]
         planet_name = row["# name"]
-    
+
         # Create new system if system does not exit.
         if system_name not in SYSTEMS:
             add_system(system_name, row)
-    
-        # Create new star if star does not exit.    
+
+        # Create new star if star does not exit.
         if star_name not in SYSTEMS[system_name]._stars:
             add_star(SYSTEMS[system_name], row)
-    
-        
+
+
         # Create new planet.
         add_planet(SYSTEMS[system_name], row)
 
