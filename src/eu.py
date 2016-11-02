@@ -62,10 +62,11 @@ def add_star(system, row):
                   row["star_metallicity_error_max"]])
 
     # spectraltype ???
-    star._spectraltype = []
+    star._spectraltype = row["star_sp_type"]
 
     # magB, magV, magR, magI, magJ, magH, magK
     # missing magB and magR
+    star._magB.extend([])
     star._magV.extend([row["mag_v"], "", ""])
     star._magI.extend([row["mag_i"], "", ""])
     star._magJ.extend([row["mag_j"], "", ""])
@@ -96,7 +97,10 @@ def add_planet(system, row):
                       row["radius_error_max"]])
 
     # temperature
-    
+    planet._temperature.extend([row["temp_measured"],
+                            [],
+                            []])
+
     # age
 
     # spectraltype
@@ -119,6 +123,9 @@ def add_planet(system, row):
                           row["omega_error_max"]])
 
     # longitude
+    planet._longitude.extend([row["lambda_angle"],
+                            row["lambda_angle_error_min"],
+                            row["lambda_angle_error_max"]])
 
     # meananomaly
 
