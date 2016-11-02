@@ -3,9 +3,11 @@ import xml.etree.ElementTree as ET
 import shutil
 import os
 
-if os.path.isdir("systems"):
-    shutil.rmtree('./systems')
-os.mkdir("systems")
+DIR = "systems2"
+
+if os.path.isdir(DIR):
+    shutil.rmtree("./"+DIR)
+os.mkdir(DIR)
 
 
 # Taken from OEC external
@@ -24,11 +26,43 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
+# Removes empty nodes from the tree
+def removeemptytags(elem):
+    if elem.text:
+        elem.text = elem.text.strip()
+    toberemoved = []
+    for child in elem:
+        if len(child.attrib) != 0:
+            if 'errorplus' in child.attrib and (child.attrib['errorplus'] == None or child.attrib['errorplus'] == ""):
+                del child.attrib['errorplus']
+            if 'errorminus' in child.attrib and (child.attrib['errorminus'] == None or child.attrib['errorminus'] == ""):
+                del child.attrib['errorminus']
+        if child is None or (len(child) == 0 and len(child.text) == 0 and len(child.attrib) == 0):
+            toberemoved.append(child)
+    for child in toberemoved:
+        elem.remove(child)
+    for child in elem:
+        removeemptytags(child)
+        # Convert error to errorminus and errorplus
+    if 'ep' in elem.attrib:
+        err = elem.attrib['ep']
+        del elem.attrib['ep']
+        elem.attrib['errorplus'] = err
+    if 'em' in elem.attrib:
+        err = elem.attrib['em']
+        del elem.attrib['em']
+        elem.attrib['errorminus'] = err
+    if 'error' in elem.attrib:
+        err = elem.attrib['error']
+        del elem.attrib['error']
+        elem.attrib['errorminus'] = err
+        elem.attrib['errorplus'] = err
+
 
 def generate_xml(systems):
     for key in systems:
         # Output file name
-        filename = "systems/" + key + ".xml"
+        filename =  DIR + "/" + key + ".xml"
 
         sys = systems[key]
         system = ET.Element("system")
@@ -45,7 +79,7 @@ def generate_xml(systems):
                 if st._attrvalue[i]:
                     if len(st._attrvalue[i]) > 1:
                         if isinstance(st._attrvalue[i], list):
-                            ET.SubElement(star, st._attrkey[i], errorminus=st._attrvalue[i][1], errorvalue=st._attrvalue[i][2]).text = st._attrvalue[i][0]
+                            ET.SubElement(star, st._attrkey[i], errorminus=st._attrvalue[i][1], errorplus=st._attrvalue[i][2]).text = st._attrvalue[i][0]
                         else:
                             ET.SubElement(star, st._attrkey[i]).text = st._attrvalue[i]
                     else:
@@ -62,7 +96,7 @@ def generate_xml(systems):
                     if pl._attrvalue[i]:
                         if len(pl._attrvalue[i]) > 1:
                             if isinstance(pl._attrvalue[i], list):
-                                ET.SubElement(planet, pl._attrkey[i], errorminus=pl._attrvalue[i][1], errorvalue=pl._attrvalue[i][2]).text = pl._attrvalue[i][0]
+                                ET.SubElement(planet, pl._attrkey[i], errorminus=pl._attrvalue[i][1], errorplus=pl._attrvalue[i][2]).text = pl._attrvalue[i][0]
                             else:
                                 ET.SubElement(planet, pl._attrkey[i]).text = pl._attrvalue[i]
                         else:
@@ -71,6 +105,7 @@ def generate_xml(systems):
                             else:
                                 ET.SubElement(planet, pl._attrkey[i]).text = pl._attrvalue[i]
 
+        removeemptytags(system)
         indent(system)
         ET.ElementTree(system).write(filename)
 
