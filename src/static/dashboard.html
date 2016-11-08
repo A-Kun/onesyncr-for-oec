@@ -1,0 +1,52 @@
+<html>
+<head>
+	<title>Test Login</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<!-- bootstrap starts -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- bootstrap ends -->
+
+<!-- fontawesome starts -->
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<!-- fontawesome ends -->
+
+<!-- google font starts -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+<!-- google font ends -->
+
+<!-- custom stylesheet starts -->
+<link rel="stylesheet" href="/static/css/bootstrap-social.css">
+<link rel="stylesheet" href="/static/css/animate.css">
+<link rel="stylesheet" href="/static/css/main.css">
+<!-- custom stylesheet ends -->
+</head>
+<body class="gradient open-sans">
+	<div id="top-bar" class="horizontal-right">&nbsp;</div>
+	<div id="hello" class="horizontal-center vertical-golden-ratio animated fadeIn">
+		<h1>Hello, {{ name }} ({{ login }})!</h1>
+		<p class="double-space">&nbsp;</p>
+		<div id="github-login-btn" class="button-center"></div>
+	</div>
+	<div id="check-btn" class="horizontal-center vertical-golden-ratio"></div>
+	<div id="res" class="invisible">
+	<span class="fa-stack fa-lg fa-10x shift-up"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-refresh fa-stack-1x fa-inverse"></i></span><br><span class="shift-up">Click on the button to check for update.</span>
+	</div>
+
+	<script>
+		setTimeout(function(){
+			element = document.getElementById('hello');
+			element.className += ' fadeOutUp';
+			topBar = document.getElementById('top-bar');
+			topBar.innerHTML = 'Hello, {{ name }} ({{ login }})!&nbsp;<a href="/" class="fa fa-sign-out" title="Log out"></a>';
+			topBar.className += ' animated fadeInRight';
+		}, 2000);
+		setTimeout(function(){
+			checkBtn = document.getElementById('check-btn');
+			checkBtn.innerHTML = document.getElementById('res').innerHTML;
+			checkBtn.className += ' animated fadeIn';
+		}, 2500);
+	</script>
+</body>
+</html>
