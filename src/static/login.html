@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Test Login</title>
+	<title>Welcome - ONE Syncr</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!-- bootstrap starts -->
@@ -30,7 +30,7 @@
 		<div id="github-login-btn" class="button-center"></div>
 	</div>
 	<script>
-		var callback = /^(.+?\/\/.+?\/)/.exec(window.location.href)[1] + 'dashboard';
+		var callback = /^(.+?\/\/.+?\/)/.exec(window.location.href)[1] + 'redirect';
 		var element = '<a class="btn btn-block btn-social btn-github btn-lg" href="https://github.com/login/oauth/authorize?client_id=56e49d113b3037c709a7&scope=user:email%20public_repo&redirect_uri=' + callback + '"><span class="fa fa-github"></span> Sign in with GitHub</a>';
 		var github = document.getElementById("github-login-btn");
 		github.innerHTML = element;

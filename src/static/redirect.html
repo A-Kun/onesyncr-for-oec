@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Dashboard - ONE Syncr</title>
+	<title>Redirect - ONE Syncr</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!-- bootstrap starts -->
@@ -23,10 +23,15 @@
 <!-- custom stylesheet ends -->
 </head>
 <body class="gradient open-sans">
-	<div class="horizontal-right animated fadeInRight">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" class="fa fa-sign-out" title="Log out"></a></div>
-	<div id="check-btn" class="horizontal-center vertical-golden-ratio animated fadeIn">
-		<span class="fa-stack fa-lg fa-10x"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-refresh fa-stack-1x fa-inverse"></i></span><br><span>Click on the button to check for update.</span>
+	<div class="horizontal-center vertical-golden-ratio animated fadeIn">
+		<h1>Hello, {{ name }} ({{ login }})!</h1>
+		<p class="double-space">Redirecting you to the dashboard.</p>
 	</div>
 
+	<script>
+		setTimeout(function(){
+			window.location.href = '/dashboard?token={{ token }}';
+		}, 1000);
+	</script>
 </body>
 </html>
