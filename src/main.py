@@ -15,7 +15,7 @@ def run(token):
     EMAIL_RECEIVER = user.name + " <" + user.email + ">"
 
     print("Downloading CSV files from Exoplanet.eu and NASA... ", flush=True)
-    # dlcsv.download()
+    dlcsv.download()
     print("Done.", flush=True)
 
     print("Parsing data from downloaded CSV file... ", end="", flush=True)
