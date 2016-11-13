@@ -1,79 +1,96 @@
-EMAIL_RECEIVER = "Andrew Wang <andrewwang963@gmail.com>"
-
-
-print("Downloading CSV files from Exoplanet.eu and NASA... ", end="", flush=True)
 import dlcsv
-print("Done.", flush=True)
-
-print("Parsing data from downloaded CSV file... ", end="", flush=True)
-from eu import *
-get_eu()
-print("Done.", flush=True)
-print("\t-> " + str(len(SYSTEMS)) + " entries found.", flush=True)
-
-print("Generating XML files from exoplanet.eu... ", end="", flush=True)
-from output import *
-generate_xml(SYSTEMS)
-print("Done.", flush=True)
-
-print("Getting XML file list... ", end="", flush=True)
+import eu
+import output
 import glob
-xml_list = glob.glob('systems/*.xml')
-print("Done.", flush=True)
-print("\t-> " + str(len(xml_list)) + " files found.", flush=True)
-
-print("Pushing XML files to GitHub...", flush=True)
-print("(Since pushing everything takes forever,\nonly 10 files will be pushed for demo.)", flush=True)
-from github import *
-count_create = 0
-count_modify = 0
-count_no_change = 0
-updated_list = []
-for next_file in xml_list:
-    file = open(next_file)
-    content = file.read()
-    try:
-        if push_file(next_file, "Update" + next_file[next_file.find("/") + 1:], content):
-            count_create += 1
-        else:
-            count_modify += 1
-    except:
-        pass
-    else:
-        updated_list.append(next_file[next_file.find("/") + 1:])
-        print("\t(" + str(count_create + count_modify) + "/10)", flush=True)
-    file.close()
-    if count_create + count_modify >= 10:
-        break
-print("Done.", flush=True)
-print("\t-> " + str(count_create) + " files created.", flush=True)
-print("\t-> " + str(count_modify) + " files modified.", flush=True)
+import github
+import mail
+import random
+from github3 import login
 
 
-print("Creating pull request... ", end="", flush=True)
-try:
-    pr = create_pull_request("Update exoplanet systems")
-    pr_number = str(pr.number)
-except github3.models.GitHubError:
-    pr_number = ""
-    print("Pull request already exists.", flush=True)
-else:
+def run(token):
+    gh = login(token=token)
+    user = gh.user()
+
+    EMAIL_RECEIVER = user.name + " <" + user.email + ">"
+
+    print("Downloading CSV files from Exoplanet.eu and NASA... ", flush=True)
+    # dlcsv.download()
     print("Done.", flush=True)
 
-print("Sending notification email... ", end="", flush=True)
-from mail import *
-body = """Hi there,
+    print("Parsing data from downloaded CSV file... ", end="", flush=True)
+    eu.get_eu()
+    print("Done.", flush=True)
+    print("\t-> " + str(len(eu.SYSTEMS)) + " entries found.", flush=True)
 
-The following files were updated:
+    print("Generating XML files from exoplanet.eu... ", end="", flush=True)
+    output.generate_xml(eu.SYSTEMS)
+    print("Done.", flush=True)
 
-"""
-for next_file in updated_list:
-    body += "\t" + next_file + "\n"
-body += "\nA pull request has been created: https://github.com/poppintk/open_exoplanet_catalogue/pull/"
-body += pr_number + "\n"
-send_email("Andrew Wang <me@andrewwang.ca>",
-           EMAIL_RECEIVER,
-           "Update to Open Exoplanet Catelogue",
-           body)
-print("Done.", flush=True)
-print("An email was sent to " + EMAIL_RECEIVER)
+    print("Getting XML file list... ", end="", flush=True)
+    xml_list = glob.glob('systems/*.xml')
+    print("Done.", flush=True)
+    print("\t-> " + str(len(xml_list)) + " files found.", flush=True)
+
+    print("Pushing XML files to GitHub...", flush=True)
+
+    num_push = 100  # number of files to be pushed for demo.
+    push_set = set()
+    for i in range(num_push):
+        rand_num = random.randint(0, len(xml_list) - 1)
+        while xml_list[rand_num] in push_set:
+            rand_num = random.randint(0, len(xml_list) - 1)
+        push_set.add(xml_list[rand_num])
+
+    print("(Randomly pushing " + str(num_push) + " files.)", flush=True)
+
+    updated_list = []
+
+    def process_push(next_file):
+        file = open(next_file)
+        content = file.read()
+        try:
+            github.push_file(next_file, "Update " + next_file[next_file.find("/") + 1:], content, token)
+        except IndexError:
+            pass
+        else:
+            updated_list.append(next_file[next_file.find("/") + 1:])
+        file.close()
+
+    ## multiprocessing does not work here...
+    # import multiprocessing
+    # pool = multiprocessing.Pool(processes=10)
+    # pool.map(process_push, xml_list)
+    for next_xml in push_set:
+        process_push(next_xml)
+
+    print("\nDone.", flush=True)
+
+    print("Creating pull request... ", end="", flush=True)
+    try:
+        pr = github.create_pull_request("Update exoplanet systems", token)
+        pr_number = "/" + str(pr.number)
+    except github.github3.models.GitHubError:
+        pr_number = "s/"
+        print("Pull request already exists.", flush=True)
+    else:
+        print("Done.", flush=True)
+
+    print("Sending notification email... ", end="", flush=True)
+    body = """Hi there,
+
+    The following files were updated:
+
+    """
+    for next_file in updated_list:
+        body += "\t" + next_file + "\n"
+    pr_url = "https://github.com/" + github.TARGET_USERNAME + "/open_exoplanet_catalogue/pull" + pr_number + "\n"
+    body += "\nA pull request has been created: " + pr_url + "\n"
+    mail.send_email("Andrew Wang <me@andrewwang.ca>",
+               EMAIL_RECEIVER,
+               "Update to Open Exoplanet Catelogue",
+               body)
+    print("Done.", flush=True)
+    print("An email was sent to " + EMAIL_RECEIVER)
+
+    return pr_url

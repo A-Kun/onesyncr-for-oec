@@ -7,6 +7,7 @@ import github3
 from github3 import login
 import requests
 import re
+import main
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -49,6 +50,13 @@ def dashboard():
     gh = login(token=token)
     user = gh.user()
     return DASHBOARD_PAGE.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token)
+
+
+@app.route("/check", methods=["GET"])
+def check_for_update():
+    token = request.args.get("token")
+    pr_url = main.run(token)
+    return 'Done. A <a href="' + pr_url + '">pull request</a> has been created.'
 
 
 if __name__ == "__main__":

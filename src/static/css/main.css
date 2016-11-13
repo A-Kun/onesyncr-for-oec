@@ -45,6 +45,10 @@
 	transform: translateY(-61.8%);
 }
 
+.top-45 {
+	top: 45% !important;
+}
+
 .double-space {
 	line-height: 2;
 }
