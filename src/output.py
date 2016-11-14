@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import shutil
 import os
 
-DIR = "systems2"
+DIR = "systems"
 
 if os.path.isdir(DIR):
     shutil.rmtree("./"+DIR)

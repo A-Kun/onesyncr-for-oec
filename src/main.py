@@ -28,7 +28,7 @@ def run(token):
     print("Done.", flush=True)
 
     print("Getting XML file list... ", end="", flush=True)
-    xml_list = glob.glob('systems2/*.xml')
+    xml_list = glob.glob('systems/*.xml')
     print("Done.", flush=True)
     print("\t-> " + str(len(xml_list)) + " files found.", flush=True)
 

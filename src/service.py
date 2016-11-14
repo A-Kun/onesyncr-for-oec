@@ -2,11 +2,11 @@
 import re
 
 import requests
+import main
 from flask import Flask
 from flask import request
 from github3 import login
-
-from d4 import main
+# from d4 import main
 
 app = Flask(__name__, static_url_path='/static')
 
