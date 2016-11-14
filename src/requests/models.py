@@ -10,11 +10,6 @@ This module contains the primary objects that power Requests.
 import collections
 import datetime
 
-# Import encoding now, to avoid implicit import later.
-# Implicit import within threads may cause LookupError when standard library is in a ZIP,
-# such as in Embedded Python. See https://github.com/kennethreitz/requests/issues/3578.
-import encodings.idna
-
 from io import BytesIO, UnsupportedOperation
 from .hooks import default_hooks
 from .structures import CaseInsensitiveDict
@@ -29,11 +24,11 @@ from .packages.urllib3.exceptions import (
 from .exceptions import (
     HTTPError, MissingSchema, InvalidURL, ChunkedEncodingError,
     ContentDecodingError, ConnectionError, StreamConsumedError)
-from ._internal_utils import to_native_string
 from .utils import (
     guess_filename, get_auth_from_url, requote_uri,
     stream_decode_response_unicode, to_key_val_list, parse_header_links,
-    iter_slices, guess_json_utf, super_len, check_header_validity)
+    iter_slices, guess_json_utf, super_len, to_native_string,
+    check_header_validity)
 from .compat import (
     cookielib, urlunparse, urlsplit, urlencode, str, bytes, StringIO,
     is_py2, chardet, builtin_str, basestring)
@@ -424,6 +419,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         # Nottin' on you.
         body = None
         content_type = None
+        length = None
 
         if not data and json is not None:
             # urllib3 requires a bytes-like body. Python 2's json.dumps
@@ -474,16 +470,17 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         self.body = body
 
     def prepare_content_length(self, body):
-        """Prepare Content-Length header based on request method and body"""
-        if body is not None:
-            length = super_len(body)
-            if length:
-                # If length exists, set it. Otherwise, we fallback
-                # to Transfer-Encoding: chunked.
-                self.headers['Content-Length'] = builtin_str(length)
-        elif self.method not in ('GET', 'HEAD') and self.headers.get('Content-Length') is None:
-            # Set Content-Length to 0 for methods that can have a body
-            # but don't provide one. (i.e. not GET or HEAD)
+        if hasattr(body, 'seek') and hasattr(body, 'tell'):
+            curr_pos = body.tell()
+            body.seek(0, 2)
+            end_pos = body.tell()
+            self.headers['Content-Length'] = builtin_str(max(0, end_pos - curr_pos))
+            body.seek(curr_pos, 0)
+        elif body is not None:
+            l = super_len(body)
+            if l:
+                self.headers['Content-Length'] = builtin_str(l)
+        elif (self.method not in ('GET', 'HEAD')) and (self.headers.get('Content-Length') is None):
             self.headers['Content-Length'] = '0'
 
     def prepare_auth(self, auth, url=''):
@@ -747,14 +744,18 @@ class Response(object):
 
         if self._content is False:
             # Read the contents.
-            if self._content_consumed:
-                raise RuntimeError(
-                    'The content for this response was already consumed')
+            try:
+                if self._content_consumed:
+                    raise RuntimeError(
+                        'The content for this response was already consumed')
 
-            if self.status_code == 0:
+                if self.status_code == 0:
+                    self._content = None
+                else:
+                    self._content = bytes().join(self.iter_content(CONTENT_CHUNK_SIZE)) or bytes()
+
+            except AttributeError:
                 self._content = None
-            else:
-                self._content = bytes().join(self.iter_content(CONTENT_CHUNK_SIZE)) or bytes()
 
         self._content_consumed = True
         # don't need to release the connection; that's been handled by urllib3
@@ -847,14 +848,7 @@ class Response(object):
 
         http_error_msg = ''
         if isinstance(self.reason, bytes):
-            # We attempt to decode utf-8 first because some servers
-            # choose to localize their reason strings. If the string
-            # isn't utf-8, we fall back to iso-8859-1 for all other
-            # encodings. (See PR #3538)
-            try:
-                reason = self.reason.decode('utf-8')
-            except UnicodeDecodeError:
-                reason = self.reason.decode('iso-8859-1')
+            reason = self.reason.decode('utf-8', 'ignore')
         else:
             reason = self.reason
 
@@ -876,6 +870,4 @@ class Response(object):
         if not self._content_consumed:
             self.raw.close()
 
-        release_conn = getattr(self.raw, 'release_conn', None)
-        if release_conn is not None:
-            release_conn()
+        return self.raw.release_conn()

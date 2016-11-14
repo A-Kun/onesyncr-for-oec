@@ -1,11 +1,16 @@
+#!/usr/bin/env python3
 import xml.etree.ElementTree as ET
 import shutil
 import os
 
-if os.path.isdir("systems"):
-    shutil.rmtree('./systems')
-os.mkdir("systems")
+DIR = "systems2"
 
+if os.path.isdir(DIR):
+    shutil.rmtree("./"+DIR)
+os.mkdir(DIR)
+
+
+# Taken from OEC external
 def indent(elem, level=0):
     i = "\n" + level*"\t"
     if len(elem):
@@ -21,11 +26,43 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
+# Removes empty nodes from the tree
+def removeemptytags(elem):
+    if elem.text:
+        elem.text = elem.text.strip()
+    toberemoved = []
+    for child in elem:
+        if len(child.attrib) != 0:
+            if 'errorplus' in child.attrib and (child.attrib['errorplus'] == None or child.attrib['errorplus'] == ""):
+                del child.attrib['errorplus']
+            if 'errorminus' in child.attrib and (child.attrib['errorminus'] == None or child.attrib['errorminus'] == ""):
+                del child.attrib['errorminus']
+        if child is None or (len(child) == 0 and len(child.text) == 0 and len(child.attrib) == 0):
+            toberemoved.append(child)
+    for child in toberemoved:
+        elem.remove(child)
+    for child in elem:
+        removeemptytags(child)
+        # Convert error to errorminus and errorplus
+    if 'ep' in elem.attrib:
+        err = elem.attrib['ep']
+        del elem.attrib['ep']
+        elem.attrib['errorplus'] = err
+    if 'em' in elem.attrib:
+        err = elem.attrib['em']
+        del elem.attrib['em']
+        elem.attrib['errorminus'] = err
+    if 'error' in elem.attrib:
+        err = elem.attrib['error']
+        del elem.attrib['error']
+        elem.attrib['errorminus'] = err
+        elem.attrib['errorplus'] = err
+
+
 def generate_xml(systems):
     for key in systems:
         # Output file name
-        filename = "systems/" + key + ".xml"
-
+        filename =  DIR + "/" + key + ".xml"
 
         sys = systems[key]
         system = ET.Element("system")
@@ -42,7 +79,7 @@ def generate_xml(systems):
                 if st._attrvalue[i]:
                     if len(st._attrvalue[i]) > 1:
                         if isinstance(st._attrvalue[i], list):
-                            ET.SubElement(star, st._attrkey[i], errorminus=st._attrvalue[i][1], errorvalue=st._attrvalue[i][2]).text = st._attrvalue[i][0]
+                            ET.SubElement(star, st._attrkey[i], errorminus=st._attrvalue[i][1], errorplus=st._attrvalue[i][2]).text = st._attrvalue[i][0]
                         else:
                             ET.SubElement(star, st._attrkey[i]).text = st._attrvalue[i]
                     else:
@@ -50,48 +87,6 @@ def generate_xml(systems):
                             ET.SubElement(star, st._attrkey[i]).text = st._attrvalue[i][0]
                         else:
                             ET.SubElement(star, st._attrkey[i]).text = st._attrvalue[i]
-            """
-            ET.SubElement(star, "mass", errorminus=st._mass[1], errorplus=st._mass[2]).text = st._mass[0]
-            ET.SubElement(star, "radius", errorminus=st._radius[1], errorplus=st._radius[2]).text = st._radius[0]
-            ET.SubElement(star, "temperature", errorminus=st._temperature[1], errorplus=st._temperature[2]).text = st._temperature[0]
-            ET.SubElement(star, "age", errorminus=st._age[1], errorplus=st._age[2]).text = st._age[0]
-            ET.SubElement(star, "metallicity").text = st._metallicity
-            ET.SubElement(star, "spectraltype").text = st._spectraltype
-
-
-            if st._magV:
-                if len(st._magV > 1):
-                    ET.SubElement(star, "magV", errorminus=st._magV[1], errorplus=st._magV[2]).text = st._magV[0]
-                else:
-                    ET.SubElement(star, "magV").text = st._magV[0]
-
-            if st._magR:
-                if len(st._magR > 1):
-                    ET.SubElement(star, "magR", errorminus=st._magR[1], errorplus=st._magR[2]).text = st._magR[0]
-                else:
-                    ET.SubElement(star, "magR").text = st._magR[0]
-
-            if st._magI:
-                if len(st._magI > 1):
-                    ET.SubElement(star, "magI", errorminus=st._magI[1], errorplus=st._magI[2]).text = st._magI[0]
-                else:
-                    ET.SubElement(star, "magI").text = st._magI[0]
-            if st._magJ:
-                if len(st._magJ > 1):
-                    ET.SubElement(star, "magJ", errorminus=st._magJ[1], errorplus=st._magJ[2]).text = st._magJ[0]
-                else:
-                    ET.SubElement(star, "magJ").text = st._magJ[0]
-            if st._magH:
-                if len(st._magH > 1):
-                    ET.SubElement(star, "magH", errorminus=st._magH[1], errorplus=st._magH[2]).text = st._magH[0]
-                else:
-                    ET.SubElement(star, "magH").text = st._magH[0]
-            if st._magK:
-                if len(st._magK > 1):
-                    ET.SubElement(star, "magK", errorminus=st._magK[1], errorplus=st._magK[2]).text = st._magK[0]
-                else:
-                    ET.SubElement(star, "magK").text = st._magK[0]"""
-
 
             for key3 in st._planets:
                 pl = st._planets[key3]
@@ -101,7 +96,7 @@ def generate_xml(systems):
                     if pl._attrvalue[i]:
                         if len(pl._attrvalue[i]) > 1:
                             if isinstance(pl._attrvalue[i], list):
-                                ET.SubElement(planet, pl._attrkey[i], errorminus=pl._attrvalue[i][1], errorvalue=pl._attrvalue[i][2]).text = pl._attrvalue[i][0]
+                                ET.SubElement(planet, pl._attrkey[i], errorminus=pl._attrvalue[i][1], errorplus=pl._attrvalue[i][2]).text = pl._attrvalue[i][0]
                             else:
                                 ET.SubElement(planet, pl._attrkey[i]).text = pl._attrvalue[i]
                         else:
@@ -109,24 +104,10 @@ def generate_xml(systems):
                                 ET.SubElement(planet, pl._attrkey[i]).text = pl._attrvalue[i][0]
                             else:
                                 ET.SubElement(planet, pl._attrkey[i]).text = pl._attrvalue[i]
-                """
-                ET.SubElement(planet, "mass", errorminus=pl._mass[1], errorplus=pl._mass[2]).text = pl._mass[0]
-                ET.SubElement(planet, "radius", errorminus=pl._radius[1], errorplus=pl._radius[2]).text = pl._radius[0]
-                ET.SubElement(planet, "temperature", errorminus=pl._temperature[1], errorplus=pl._temperature[2]).text = pl._temperature[0]
-                ET.SubElement(planet, "semimajoraxis", errorminus=pl._semimajoraxis[1], errorplus=pl._semimajoraxis[2]).text = pl._semimajoraxis[0]
-                ET.SubElement(planet, "eccentrincity", errorminus=pl._eccentricity[1], errorplus=pl._eccentricity[2]).text = pl._eccentricity[0]
-                ET.SubElement(planet, "periastron", errorminus=pl._periastron[1], errorplus=pl._periastron[2]).text = pl._perriastron[0]
-                ET.SubElement(planet, "inclination", errorminus=pl._inclination[1], errorplus=pl._inclination[2]).text = pl._inclination[0]
-                ET.SubElement(planet, "period", errorminus=pl._period[1], errorplus=pl._period[2]).text = pl._period[0]
-                ET.SubElement(planet, "periastrontime", errorminus=pl._periastrontime[1], errorplus=pl._periastrontime[2]).text = pl._periastrontime[0]
 
-                ET.SubElement(planet, "discoverymethod").text = pl._discoverymethod
-                ET.SubElement(planet, "discoveryyear").text = pl._discoveryyear
-                ET.SubElement(planet, "lastupdate").text = pl._lastupdate
-                """
+        removeemptytags(system)
         indent(system)
         ET.ElementTree(system).write(filename)
-
 
 if __name__ == "__main__":
     if 0:

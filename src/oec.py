@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Data Structure
 
@@ -8,8 +10,7 @@ System:
  - distance (parsec)
  - epoch (BJD)
  {Planet, Star, Binary}
- 
- 
+
 Binary:
  - name
  - semimajoraxis
@@ -33,7 +34,7 @@ Binary:
  - magH
  - magK
  {Planet, Star, Binary}
- 
+
 Star:
  - name
  - mass (solar masses)
@@ -261,7 +262,7 @@ class Planet:
                            self._discoveryyear,
                            self._lastupdate,
                            self._spinorbitalalignment]
-        
+
 
 def deg_to_dms(deg):
     """(str) -> str
@@ -281,10 +282,10 @@ def deg_to_dms(deg):
     sdeg = str(degree) if abs(degree) >= 10  else "0" + str(degree)
     smin = str(minute) if abs(minute) >= 10  else "0" + str(minute)
     ssec = str(second) if abs(second) >= 10  else "0" + str(second)
-    
+
     # Concatenate deg min sec together.
     DMS = sdeg + " " + smin + " " + ssec
-    
+
     # Add positive/negative sign.
     if fdeg > 0:
         return "+" + DMS
