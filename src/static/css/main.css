@@ -71,3 +71,10 @@
 	display: none;
 }
 
+.left-margin {
+	margin-left: 2px;
+}
+
+.right-margin {
+	margin-right: 2px;
+}
