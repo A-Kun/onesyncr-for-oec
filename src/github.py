@@ -13,6 +13,10 @@ def push_file(path, commit_msg, content, token):
     gh = login(token=token)
     user = gh.user()
     repo = gh.repository(user.login, "open_exoplanet_catalogue")
+    if not repo:
+        target_repo = gh.repository(TARGET_USERNAME, "open_exoplanet_catalogue")
+        target_repo.create_fork()
+        repo = gh.repository(user.login, "open_exoplanet_catalogue")
     github_api_base_url = "https://api.github.com/repos/" + user.login + "/open_exoplanet_catalogue/contents/"
     try:  # file does not exist, create the file
         repo.create_file(path, commit_msg, content.encode())
