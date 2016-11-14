@@ -23,5 +23,7 @@ function startShow(obj){
 		target.innerHTML='<object type="text/html" data="d2.html" ></object>';
 	}else if(obj.innerHTML == "Deliverable #3"){
 		target.innerHTML='<object type="text/html" data="d3.html" ></object>';
+	}else if(obj.innerHTML == "Deliverable #4"){
+		target.innerHTML='<object type="text/html" data="d4.html" ></object>';
 	}
 }
