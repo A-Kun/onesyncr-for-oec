@@ -1,0 +1,25 @@
+Name of reviewer: Wentao Sui
+Code under review: github.py
+Date of review: Nov. 13, 2016
+Author of code: Andrew Wang
+
+
+Bugs:
+  - push_file will commit a pull request to github regardless if the file has been modified.
+  - This causes github to receive an empty merge.
+Suggestion for fix:
+  - Check for changes prior to committing pull request.
+
+
+Missing documentation:
+  - Lacking docstring and comments for functions push_file and create_pull_request.
+Suggestion for fix:
+  - More comments.
+  
+  
+Vulnerabilities in code:
+  - Did not check for changes in files prior to push. This could make the merging process very time consuming.
+  - Invalid parameters not handled.
+Suggestion for fix:
+  - Same as above.
+
