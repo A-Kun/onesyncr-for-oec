@@ -1,6 +1,7 @@
 .gitignore
 *.pyc
 *.pyo
+.idea/*.xml
 src/tmp
 src/systems
 src/systems2
