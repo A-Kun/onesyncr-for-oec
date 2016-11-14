@@ -158,7 +158,7 @@ for i in list_xmldir_eu:
     # database has such a name for the system
     if db_result:
 
-        print 'the eu sytem is :' + str(eu_system)
+        print 'the eu system is: ' + str(eu_system)
 
         print db_result
 
