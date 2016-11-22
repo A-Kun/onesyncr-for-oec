@@ -34,12 +34,12 @@ def login_redirect():
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
     dashboard_file = open("static/dashboard.html")
-    DASHBOARD_PAGE = dashboard_file.read()
+    dashboard_page = dashboard_file.read()
     dashboard_file.close()
     token = request.args.get("token")
     gh = login(token=token)
     user = gh.user()
-    return DASHBOARD_PAGE.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token)
+    return dashboard_page.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token)
 
 
 @app.route("/check", methods=["GET"])
@@ -52,7 +52,7 @@ def check_for_update():
 @app.route("/report", methods=["GET"])
 def report_page():
     report_file = open("static/report.html")
-    REPORT_PAGE = report_file.read()
+    report_page = report_file.read()
     report_file.close()
     return app.send_static_file("report.html")
 
