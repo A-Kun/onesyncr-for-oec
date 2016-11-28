@@ -1,0 +1,1 @@
+Hi Andrew, open main to run in python3 environment, it should take about 40sec for the merging. before you run main.py, pleaes make sure run nasa.py,oec.py and eu.py to generating the xml file. 
