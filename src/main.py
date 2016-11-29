@@ -1,96 +1,212 @@
-import dlcsv
-import eu
-import output
+#!/usr/bin/python
+import time
+import os
 import glob
-import github
-import mail
-import random
-from github3 import login
+import shutil
+import threading
+import xmltools
+import xml.etree.ElementTree as ET
+
+CURRENT = os.getcwd()
+DESTINATION = os.path.join(CURRENT,'OEC')
+CONFLICT = os.path.join(CURRENT,'push')
+print(DESTINATION)
+print(CONFLICT)
 
 
-def run(token):
-    gh = login(token=token)
-    user = gh.user()
+def file_name(dir):
+    '''
+    Return the directory with file name only
+    :param dir: str
+    :return: str
+    '''
+    return dir.split('\\')[-1]
 
-    EMAIL_RECEIVER = user.name + " <" + user.email + ">"
 
-    print("Downloading CSV files from Exoplanet.eu and NASA... ", flush=True)
-    dlcsv.download()
-    print("Done.", flush=True)
-
-    print("Parsing data from downloaded CSV file... ", end="", flush=True)
-    eu.get_eu()
-    print("Done.", flush=True)
-    print("\t-> " + str(len(eu.SYSTEMS)) + " entries found.", flush=True)
-
-    print("Generating XML files from exoplanet.eu... ", end="", flush=True)
-    output.generate_xml(eu.SYSTEMS)
-    print("Done.", flush=True)
-
-    print("Getting XML file list... ", end="", flush=True)
-    xml_list = glob.glob('systems/*.xml')
-    print("Done.", flush=True)
-    print("\t-> " + str(len(xml_list)) + " files found.", flush=True)
-
-    print("Pushing XML files to GitHub...", flush=True)
-
-    num_push = 100  # number of files to be pushed for demo.
-    push_set = set()
-    for i in range(num_push):
-        rand_num = random.randint(0, len(xml_list) - 1)
-        while xml_list[rand_num] in push_set:
-            rand_num = random.randint(0, len(xml_list) - 1)
-        push_set.add(xml_list[rand_num])
-
-    print("(Randomly pushing " + str(num_push) + " files.)", flush=True)
-
-    updated_list = []
-
-    def process_push(next_file):
-        file = open(next_file)
-        content = file.read()
-        try:
-            github.push_file(next_file, "Update " + next_file[next_file.find("/") + 1:], content, token)
-        except IndexError:
-            pass
-        else:
-            updated_list.append(next_file[next_file.find("/") + 1:])
-        file.close()
-
-    ## multiprocessing does not work here...
-    # import multiprocessing
-    # pool = multiprocessing.Pool(processes=10)
-    # pool.map(process_push, xml_list)
-    for next_xml in push_set:
-        process_push(next_xml)
-
-    print("\nDone.", flush=True)
-
-    print("Creating pull request... ", end="", flush=True)
+def has_attrib(ele,attr):
     try:
-        pr = github.create_pull_request("Update exoplanet systems", token)
-        pr_number = "/" + str(pr.number)
-    except github.github3.models.GitHubError:
-        pr_number = "s/"
-        print("Pull request already exists.", flush=True)
-    else:
-        print("Done.", flush=True)
+        ele.attrib[attr]
+        return True
+    except:
+        return False
 
-    print("Sending notification email... ", end="", flush=True)
-    body = """Hi there,
+def compare_list_dir(other,oec):
+    '''
+    :param other: list of str
+    :param oec: list of str
+    :return: list of (list of str, dict)
+    Return the new list of list, fist inner list in outer list stores the different
+     filename exist and the second inner list will be same file name
+    '''
 
-    The following files were updated:
+    dir_maping = {}
+    # dir maping is dict stores that mapping the with same file names
+    diff = []
+    outer = [diff,dir_maping]
 
-    """
-    for next_file in updated_list:
-        body += "\t" + next_file + "\n"
-    pr_url = "https://github.com/" + github.TARGET_USERNAME + "/open_exoplanet_catalogue/pull" + pr_number + "\n"
-    body += "\nA pull request has been created: " + pr_url + "\n"
-    mail.send_email("Andrew Wang <me@andrewwang.ca>",
-               EMAIL_RECEIVER,
-               "Update to Open Exoplanet Catelogue",
-               body)
-    print("Done.", flush=True)
-    print("An email was sent to " + EMAIL_RECEIVER)
+    # loop through director in other list
+    for dir_other in other:
+        marker = False
+        for dir_oec in oec:
+            # find the same file names
+            if file_name(dir_other) == file_name(dir_oec):
+                # mapping dir_other to dir_oec
+                dir_maping[dir_other] = dir_oec
+                marker = True
+                # break out current loop
+                break
+            # files that are the same
+        # did not find a match file name
+        if marker is False:
+            diff.append(dir_other)
+    return outer
 
-    return pr_url
+#
+# other = ['a','b','c']
+# oec = ['a','e','t']
+# print(compare_list_dir(other,oec))
+
+def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
+    '''
+    This is function deal with all compare cases
+    :param Eother: Element tree
+    :param Eoec: Element tree
+    :return:
+    '''
+    # first use to control return once at root
+    first += 1
+    # loop through the child tag in Etree of other database
+    for child in Eother:
+        a = Eoec.getchildren()
+
+        # get one element with given tag in current level
+        childOEC = Eoec.find(child.tag) # DONT change this
+
+        if childOEC != None: # find only check direct children
+            if child.tag == 'star' or child.tag == 'planet':
+                star_planet = Eoec.findall(child.tag)
+                for element in star_planet:
+                    merge(child, element, dirOther, dirOec, root, first, is_move)
+            # if child tag in third database is None then just skip
+            elif child.text is None:
+                continue
+            # tag is name
+            elif child.tag == 'name':
+                all_names = Eoec.findall(child.tag)
+                marker = False
+                for oec_name in all_names:
+                    if oec_name.text == child.text:
+                        marker = True
+                        break
+                # the name tag does not exist in OEC then append the name tag
+                if marker == False:
+                    Eoec.append(child)
+            # deal with errors
+            elif 'errorplus' in child.attrib:
+                # update with smaller error
+                try:
+                    y = float(child.attrib['errorplus'])
+                except:
+                    print (child.attrib['errorplus'])
+                    print ('Bad data in errorplus with directory name:' + str(dirOther))
+                    break
+                if not has_attrib(childOEC,'errorplus'):
+                    childOEC.text = child.text
+                    childOEC.set('errorplus', child.attrib['errorplus'])
+                    childOEC.set('errorminus', child.attrib['errorplus'])
+                elif float(child.attrib['errorplus']) < float(childOEC.attrib['errorplus']):
+                    childOEC.text = child.text
+                    childOEC.set('errorplus', child.attrib['errorplus'])
+                    childOEC.set('errorminus', child.attrib['errorplus'])
+            # never happen child.text is list at this point
+            # if OEC tag is none then just update with third database info
+            elif childOEC.text is None:
+                childOEC.text = child.text
+            # deal with numbers
+            # elif (child.text).replace('.','',1).isdigit():
+            #     # if not equal then up to client's decision(move to confict area)
+            #     if child.text != childOEC.text:
+            #         move = True
+            # # any other cases
+            else:
+                # the content is not the same then push file to (confict area)
+                if child.text != childOEC.text:
+                    move = True
+            # if is a distance tag
+            merge(child,childOEC,dirOther,dirOec,root,first,is_move)
+        # oec does not have such tag then update
+        else:
+            Eoec.append(child)
+    # control only one return
+    if(first == 0):
+        # clear indentation in xml
+        xmltools.indent(Eoec, level=0)
+        # write to xml directory with all updates
+        root.write(dirOec)
+
+        # copy file
+        if is_move == True:
+            try:
+                shutil.copy(dirOther, CONFLICT)
+            except IOError:
+                os.chmod(dirOther, 777)  # ?? still can raise exception
+                shutil.copy(dirOther, CONFLICT)
+
+        return
+
+
+def merge_two_database(list_third,list_oec):
+    mainList = compare_list_dir(list_third ,list_oec)
+    diffList = mainList[0]
+    sameDict = mainList[1]
+    # IF file name do not exist in OEC directory, then move to OEC dir
+    for diff_dir in diffList:
+        try:
+            shutil.copy(diff_dir, DESTINATION)
+        except (IOError):
+            os.chmod(diff_dir, 777)  # ?? still can raise exception
+            shutil.copy(diff_dir, DESTINATION)
+    # start merge file that do exist in OEC , each directory create a thread to excute merge
+    # since the filename in directory is unique so safe to use threading
+    for dirOther,dirOec in sameDict.items():
+        other = ET.parse(dirOther).getroot()
+        tree = ET.parse(dirOec)
+        oec = tree.getroot()
+        first = -1  # use to control return statement in merge recursion call
+        move = False  # use to decide whehter a file should move
+        # create threading excute merge function
+        t = threading.Thread(target=merge, args = (other, oec, dirOther,dirOec,tree,first,move,))
+        t.daemon = True  # set thread to daemon ('ok' won't be printed in this case)
+        t.start()
+        t.join()
+
+def main():
+    list_xmldir_nasa = glob.glob(os.getcwd()+"\\Nasa\\*.xml")
+    list_xmldir_eu = glob.glob(os.getcwd()+"\\EU\\*.xml")
+    list_xmldir_oec = glob.glob(os.getcwd()+"\\OEC\\*.xml")
+
+    print("nasa before merge size is :" + str(len(list_xmldir_nasa)))
+    print("eu before size merge is :" + str(len(list_xmldir_eu)))
+    print("oec before size merge is :" + str(len(list_xmldir_oec)))
+
+    print("start merging....")
+    try:
+        merge_two_database(list_xmldir_nasa, list_xmldir_oec)
+        merge_two_database(list_xmldir_eu, list_xmldir_oec)
+    except:
+        pass
+    print('merge done')
+
+    list_xmldir_nasa = glob.glob(os.getcwd() + "\\Nasa\\*.xml")
+    list_xmldir_eu = glob.glob(os.getcwd() + "\\EU\\*.xml")
+    list_xmldir_oec = glob.glob(os.getcwd() + "\\OEC\\*.xml")
+
+    print("nasa after merge size is :" + str(len(list_xmldir_nasa)))
+    print("eu after merge size is :" + str(len(list_xmldir_eu)))
+    print("oec after merge size is :" + str(len(list_xmldir_oec)))
+
+
+if __name__ == '__main__':
+    start_time = time.time()
+    main()
+    print("--- %s seconds ---" % (time.time() - start_time))
