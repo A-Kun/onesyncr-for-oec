@@ -27,7 +27,7 @@
 <!-- custom stylesheet ends -->
 </head>
 <body class="gradient open-sans">
-	<div class="horizontal-right animated fadeInRight">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" class="fa fa-sign-out left-margin" title="Log out"></a></div>
+	<div class="horizontal-right">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" class="fa fa-sign-out left-margin" title="Log out"></a></div>
 	<center class="top-margin">
 		<table>
 			<tr>
@@ -35,6 +35,7 @@
 				<th>Compare</th>
 				<th>Operation</th>
 			</tr>
+			{{ report }}
 		</table>
 	</center>
 

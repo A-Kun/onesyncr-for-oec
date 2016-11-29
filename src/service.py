@@ -54,6 +54,9 @@ def report_page():
     report_file = open("static/report.html")
     report_page = report_file.read()
     report_file.close()
+
+
+
     return app.send_static_file("report.html")
 
 
