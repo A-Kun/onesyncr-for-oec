@@ -1,194 +1,107 @@
-#!/usr/bin/env python3
+#!/usr/bin/python 
+import urllib.request
+import os
+import xml.etree.ElementTree as ET
+import xmltools
 import csv
-import oec
+
+#####################
+# Exoplanet.eu
+#####################
+url_exoplaneteu = "http://exoplanet.eu/catalog/csv/"
 
 
-# Global dictionary for all systems.
-SYSTEMS = {}
+def get():
+    xmltools.ensure_empty_dir("_tmp_data/eu")
+    urllib.request.urlretrieve(url_exoplaneteu, "_tmp_data/eu/exoplanet.eu_catalog.csv")
 
 
-def add_system(name, row):
-    # Create new System object.
-    system = oec.System(name)
+def parse():
+    # delete old data
+    xmltools.ensure_empty_dir("_data/EU")
 
-    # declination
-    system._declination = oec.deg_to_dms(row["dec"])
+    # parse data into default xml format
+    f = open("_tmp_data/eu/exoplanet.eu_catalog.csv")
+    header = [x.strip() for x in f.readline()[1:].replace("# ", "").split(",")]
+    reader = csv.reader(f)
+    for line in reader:
+        p = dict(zip(header, line))
+        outputfilename = "_data/EU/" + p["star_name"].strip() + ".xml"
+        if os.path.exists(outputfilename):
+            system = ET.parse(outputfilename).getroot()
+            star = system.find(".//star")
+        else:
+            system = ET.Element("system")
+            ET.SubElement(system, "name").text = p["star_name"].strip()
 
-    # rightascension
-    system._rightascension = oec.deg_to_hms(row["ra"])
+            # convert the right ascension to hh mm ss
+            tempra = ""
+            ra = float(p['ra'])
+            hours = ra / 360 * 24
+            tempra += "%.2i" % (hours)
+            minutes = hours % 1 * 60
+            tempra += " %.2i" % (minutes)
+            seconds = minutes % 1 * 60
+            tempra += " %.2i" % (round(seconds))
+            ET.SubElement(system, "rightascension").text = tempra
 
-    # distance & error -/+
-    system._distance.extend([row["star_distance"],
-                        row["star_distance_error_min"],
-                        row["star_distance_error_max"]])
+            # convert declination to deg mm ss
+            tempdec = ""
+            dec = float(p['dec'])
+            tempdec += "%+.2i" % (dec)
+            minutes = dec % 1 * 60
+            tempdec += " %.2i" % (minutes)
+            seconds = round(minutes % 1 * 60)
+            tempdec += " %.2i" % (seconds)
+            ET.SubElement(system, "declination").text = tempdec
 
-    # epoch????
-    SYSTEMS[name] = system
+            ET.SubElement(system, "distance").text = p["star_distance"]
+            star = ET.SubElement(system, "star")
+            ET.SubElement(star, "name").text = p["star_name"].strip()
+            ET.SubElement(star, "age").text = p["star_age"]
+            ET.SubElement(star, "radius").text = p["star_radius"]
+            ET.SubElement(star, "mass").text = p["star_mass"]
+            ET.SubElement(star, "spectraltype").text = p["star_sp_type"]
+            ET.SubElement(star, "temperature").text = p["star_teff"]
+            ET.SubElement(star, "metallicity").text = p["star_metallicity"]
 
+        planet = ET.SubElement(star, "planet")
+        ET.SubElement(planet, "name").text = p["name"].strip()
+        ET.SubElement(planet, "semimajoraxis", errorminus=p["semi_major_axis_error_min"],
+                      errorplus=p["semi_major_axis_error_max"]).text = p["semi_major_axis"]
+        ET.SubElement(planet, "periastron", errorminus=p['omega_error_min'], errorplus=p['omega_error_max']).text = p[
+            "omega"]
+        ET.SubElement(planet, "eccentricity", errorminus=p['eccentricity_error_min'],
+                      errorplus=p['eccentricity_error_max']).text = p["eccentricity"]
+        ET.SubElement(planet, "longitude", errorminus=p['lambda_angle_error_min'],
+                      errorplus=p['lambda_angle_error_max']).text = p["lambda_angle"]
+        ET.SubElement(planet, "inclination", errorminus=p['inclination_error_min'],
+                      errorplus=p['inclination_error_max']).text = p["inclination"]
+        ET.SubElement(planet, "period", errorminus=p['orbital_period_error_min'],
+                      errorplus=p['orbital_period_error_max']).text = p["orbital_period"]
+        ET.SubElement(planet, "mass", errorminus=p['mass_error_min'], errorplus=p['mass_error_max']).text = p["mass"]
+        ET.SubElement(planet, "radius", errorminus=p['radius_error_min'], errorplus=p['radius_error_max']).text = p[
+            "radius"]
+        ET.SubElement(planet, "temperature").text = p["temp_measured"]
+        # to match OEC
+        if p['detection_type'].find("radial") != -1:
+            ET.SubElement(planet, "discoverymethod").text = "RV"
+        elif p['detection_type'].find("imaging") != -1:
+            ET.SubElement(planet, "discoverymethod").text = "imaging"
+        elif p['detection_type'].find("transit") != -1:
+            ET.SubElement(planet, "discoverymethod").text = "transit"
+        ET.SubElement(planet, "discoveryyear").text = p["discovered"]
+        ET.SubElement(planet, "lastupdate").text = p["updated"].replace("-", "/")[2:]
 
-def add_star(system, row):
-    star_name = row["star_name"]
+        # ET.SubElement(planet, "spinorbitalignment").text = p[""]
 
-    star = oec.Star(star_name)
-    # alternate names
-    star_alt_names = row["star_alternate_names"].split(",")
+        # Cleanup and write file
+        xmltools.removeemptytags(system)
+        xmltools.indent(system)
+        ET.ElementTree(system).write(outputfilename)
+    f.close()
 
-    if "" in star_alt_names: star_alt_names.remove("")
-    star._names.union(set(star_alt_names))
-
-    # mass
-    star._mass.extend([row["star_mass"],
-                  row["star_mass_error_min"],
-                  row["star_mass_error_max"]])
-
-    # radius
-    star._radius.extend([row["star_radius"],
-                  row["star_radius_error_min"],
-                  row["star_radius_error_max"]])
-
-    # temperature
-    star._temperature.extend([row["star_teff"],
-                  row["star_teff_error_min"],
-                  row["star_teff_error_max"]])
-
-    # age
-    star._age.extend([row["star_age"],
-                  row["star_age_error_min"],
-                  row["star_age_error_max"]])
-
-    # metallicity
-    star._metallicity.extend([row["star_metallicity"],
-                  row["star_metallicity_error_min"],
-                  row["star_metallicity_error_max"]])
-
-    # spectraltype ???
-    star._spectraltype = row["star_sp_type"]
-
-    # magB, magV, magR, magI, magJ, magH, magK
-    # missing magB and magR
-    star._magB.extend([])
-    star._magV.extend([row["mag_v"], "", ""])
-    star._magI.extend([row["mag_i"], "", ""])
-    star._magJ.extend([row["mag_j"], "", ""])
-    star._magH.extend([row["mag_h"], "", ""])
-    star._magK.extend([row["mag_k"], "", ""])
-
-    # Add star into System.
-    system._stars[star_name] = star
-
-
-def add_planet(system, row):
-    planet_name = row["# name"]
-
-    planet = oec.Planet(planet_name)
-    planet_alt_names = row["alternate_names"].split(",")
-
-    if "" in planet_alt_names: planet_alt_names.remove("")
-    planet._names.union(set(planet_alt_names))
-
-    # mass
-    planet._mass.extend([row["mass"],
-                    row["mass_error_min"],
-                    row["mass_error_max"]])
-
-    # radius
-    planet._radius.extend([row["radius"],
-                      row["radius_error_min"],
-                      row["radius_error_max"]])
-
-    # temperature
-    planet._temperature.extend([row["temp_measured"],
-                            [],
-                            []])
-
-    # age
-
-    # spectraltype
-
-    # semimajoraxis
-    planet._semimajoraxis.extend([row["semi_major_axis"],
-                             row["semi_major_axis_error_min"],
-                             row["semi_major_axis_error_max"]])
-
-    # seperation
-
-    # eccentricity
-    planet._eccentricity.extend([row["eccentricity"],
-                            row["eccentricity_error_min"],
-                            row["eccentricity_error_max"]])
-
-    # periastron
-    planet._periastron.extend([row["omega"],
-                          row["omega_error_min"],
-                          row["omega_error_max"]])
-
-    # longitude
-    planet._longitude.extend([row["lambda_angle"],
-                            row["lambda_angle_error_min"],
-                            row["lambda_angle_error_max"]])
-
-    # meananomaly
-
-    # ascendingnode
-
-    # inclination
-    planet._inclination.extend([row["inclination"],
-                           row["inclination_error_min"],
-                           row["inclination_error_max"]])
-
-    # impactperameter
-
-    # period
-    planet._period.extend([row["orbital_period"],
-                      row["orbital_period_error_min"],
-                      row["orbital_period_error_max"]])
-
-    # periastrontime
-    planet._periastrontime.extend([row["tperi"],
-                              row["tperi_error_min"],
-                              row["tperi_error_max"]])
-
-    # maximumrvtime
-
-    # discoverymethod
-    planet._discoverymethod = row["detection_type"]
-
-    # istransiting
-
-    # description
-
-    # discoveryyear
-    planet._discoveryyear = row["discovered"]
-
-    # lastupdate
-    planet._lastupdate = row["updated"]
-
-    # spinorbitalalignment
-    system._planets[planet_name] = planet
-    system._stars[row["star_name"]]._planets[planet_name] = planet
-
-
-def get_eu():
-    # Call dlcsv to download csvs
-    csvfile = open('tmp/eu.csv')
-    reader = csv.DictReader(csvfile)
-
-
-    for row in reader:
-        system_name = row["star_name"]
-        star_name = row["star_name"]
-        planet_name = row["# name"]
-
-        # Create new system if system does not exit.
-        if system_name not in SYSTEMS:
-            add_system(system_name, row)
-
-        # Create new star if star does not exit.
-        if star_name not in SYSTEMS[system_name]._stars:
-            add_star(SYSTEMS[system_name], row)
-
-
-        # Create new planet.
-        add_planet(SYSTEMS[system_name], row)
-
-    csvfile.close()
+if __name__ == "__main__":
+    get()
+    parse()
+    print("EU Done", flush=True)

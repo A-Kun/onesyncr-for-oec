@@ -45,7 +45,7 @@ def dashboard():
 @app.route("/check", methods=["GET"])
 def check_for_update():
     token = request.args.get("token")
-    pr_url = main.run(token)
+    pr_url = main.main()
     return 'Done. A <a href="' + pr_url + '">pull request</a> has been created.'
 
 
