@@ -5,13 +5,17 @@ import glob
 import shutil
 import threading
 import xmltools
+import multiprocessing
+import eu
+import nasa
+import oec
 import xml.etree.ElementTree as ET
 
 CURRENT = os.getcwd()
 DESTINATION = os.path.join(CURRENT,'OEC')
 CONFLICT = os.path.join(CURRENT,'push')
-print(DESTINATION)
-print(CONFLICT)
+print(DESTINATION, flush=True)
+print(CONFLICT, flush=True)
 
 
 def file_name(dir):
@@ -64,7 +68,7 @@ def compare_list_dir(other,oec):
 #
 # other = ['a','b','c']
 # oec = ['a','e','t']
-# print(compare_list_dir(other,oec))
+# print(compare_list_dir(other,oec), flush=True)
 
 def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
     '''
@@ -107,8 +111,8 @@ def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
                 try:
                     y = float(child.attrib['errorplus'])
                 except:
-                    print (child.attrib['errorplus'])
-                    print ('Bad data in errorplus with directory name:' + str(dirOther))
+                    print(child.attrib['errorplus'], flush=True)
+                    print('Bad data in errorplus with directory name:' + str(dirOther), flush=True)
                     break
                 if not has_attrib(childOEC,'errorplus'):
                     childOEC.text = child.text
@@ -180,33 +184,63 @@ def merge_two_database(list_third,list_oec):
         t.start()
         t.join()
 
-def main():
-    list_xmldir_nasa = glob.glob(os.getcwd()+"\\Nasa\\*.xml")
-    list_xmldir_eu = glob.glob(os.getcwd()+"\\EU\\*.xml")
-    list_xmldir_oec = glob.glob(os.getcwd()+"\\OEC\\*.xml")
 
-    print("nasa before merge size is :" + str(len(list_xmldir_nasa)))
-    print("eu before size merge is :" + str(len(list_xmldir_eu)))
-    print("oec before size merge is :" + str(len(list_xmldir_oec)))
+def run_merge():
+    list_xmldir_nasa = glob.glob("Nasa/*.xml")
+    list_xmldir_eu = glob.glob("EU/*.xml")
+    list_xmldir_oec = glob.glob("OEC/*.xml")
 
-    print("start merging....")
+    print("nasa before merge size is :" + str(len(list_xmldir_nasa)), flush=True)
+    print("eu before size merge is :" + str(len(list_xmldir_eu)), flush=True)
+    print("oec before size merge is :" + str(len(list_xmldir_oec)), flush=True)
+
+    print("start merging....", flush=True)
     try:
         merge_two_database(list_xmldir_nasa, list_xmldir_oec)
         merge_two_database(list_xmldir_eu, list_xmldir_oec)
     except:
         pass
-    print('merge done')
+    print('merge done', flush=True)
 
-    list_xmldir_nasa = glob.glob(os.getcwd() + "\\Nasa\\*.xml")
-    list_xmldir_eu = glob.glob(os.getcwd() + "\\EU\\*.xml")
-    list_xmldir_oec = glob.glob(os.getcwd() + "\\OEC\\*.xml")
+    list_xmldir_nasa = glob.glob("Nasa/*.xml")
+    list_xmldir_eu = glob.glob("EU/*.xml")
+    list_xmldir_oec = glob.glob("OEC/*.xml")
 
-    print("nasa after merge size is :" + str(len(list_xmldir_nasa)))
-    print("eu after merge size is :" + str(len(list_xmldir_eu)))
-    print("oec after merge size is :" + str(len(list_xmldir_oec)))
+    print("nasa after merge size is :" + str(len(list_xmldir_nasa)), flush=True)
+    print("eu after merge size is :" + str(len(list_xmldir_eu)), flush=True)
+    print("oec after merge size is :" + str(len(list_xmldir_oec)), flush=True)
+
+
+def download_database(db):
+    if db == "nasa":
+        nasa.get()
+        nasa.parse()
+        print('Nasa done', flush=True)
+    elif db == "eu":
+        eu.get()
+        eu.parse()
+        print("EU done", flush=True)
+    elif db == "oec":
+        oec.get()
+        oec.parse()
+        print('OEC done', flush=True)
+
+
+def main():
+    start_time = time.time()
+
+    download_list = ["nasa", "eu", "oec"]
+    pool = multiprocessing.Pool(processes=3)
+    pool.map(download_database, download_list)
+
+    xmltools.ensure_empty_dir("OEC_old")
+    file_list = glob.glob("OEC/*.xml")
+    for next_file in file_list:
+        shutil.copy2(next_file, "OEC_old/")
+
+    main()
+    print("--- %s seconds ---" % (time.time() - start_time), flush=True)
 
 
 if __name__ == '__main__':
-    start_time = time.time()
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))

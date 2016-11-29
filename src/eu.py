@@ -12,8 +12,8 @@ url_exoplaneteu = "http://exoplanet.eu/catalog/csv/"
 
 
 def get():
-    xmltools.ensure_empty_dir("tmp_data")
-    urllib.request.urlretrieve(url_exoplaneteu, "tmp_data/exoplanet.eu_catalog.csv")
+    xmltools.ensure_empty_dir("tmp_data/eu")
+    urllib.request.urlretrieve(url_exoplaneteu, "tmp_data/eu/exoplanet.eu_catalog.csv")
 
 
 def parse():
@@ -21,7 +21,7 @@ def parse():
     xmltools.ensure_empty_dir("EU")
 
     # parse data into default xml format
-    f = open("tmp_data/exoplanet.eu_catalog.csv")
+    f = open("tmp_data/eu/exoplanet.eu_catalog.csv")
     header = [x.strip() for x in f.readline()[1:].replace("# ", "").split(",")]
     reader = csv.reader(f)
     for line in reader:

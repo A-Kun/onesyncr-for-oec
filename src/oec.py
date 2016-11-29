@@ -8,15 +8,15 @@ import os
 url_oec = "https://github.com/OpenExoplanetCatalogue/open_exoplanet_catalogue/archive/master.zip"
 
 def get():
-    xmltools.ensure_empty_dir("tmp_data")
-    urllib.request.urlretrieve (url_oec, "tmp_data/oec.zip")
+    xmltools.ensure_empty_dir("tmp_data/oec")
+    urllib.request.urlretrieve(url_oec, "tmp_data/oec/oec.zip")
 
 def parse():
     # delete old data
     xmltools.ensure_empty_dir("OEC")
 
     # parse data into default xml format
-    ziphandler = zipfile.ZipFile("tmp_data/oec.zip")
+    ziphandler = zipfile.ZipFile("tmp_data/oec/oec.zip")
     for name in ziphandler.namelist():
         # only keep main systems/ directory
         if name[0:40] == "open_exoplanet_catalogue-master/systems/" and len(name)>40:
