@@ -28,11 +28,8 @@ def file_name(dir):
 
 
 def has_attrib(ele,attr):
-    try:
-        ele.attrib[attr]
-        return True
-    except:
-        return False
+    return attr in ele.attrib
+
 
 def compare_list_dir(other,oec):
     '''
@@ -186,9 +183,9 @@ def merge_two_database(list_third,list_oec):
 
 
 def run_merge():
-    list_xmldir_nasa = glob.glob("Nasa/*.xml")
-    list_xmldir_eu = glob.glob("EU/*.xml")
-    list_xmldir_oec = glob.glob("OEC/*.xml")
+    list_xmldir_nasa = glob.glob("_data/Nasa/*.xml")
+    list_xmldir_eu = glob.glob("_data/EU/*.xml")
+    list_xmldir_oec = glob.glob("_data/OEC/*.xml")
 
     print("nasa before merge size is :" + str(len(list_xmldir_nasa)), flush=True)
     print("eu before size merge is :" + str(len(list_xmldir_eu)), flush=True)
@@ -202,9 +199,9 @@ def run_merge():
         pass
     print('merge done', flush=True)
 
-    list_xmldir_nasa = glob.glob("Nasa/*.xml")
-    list_xmldir_eu = glob.glob("EU/*.xml")
-    list_xmldir_oec = glob.glob("OEC/*.xml")
+    list_xmldir_nasa = glob.glob("_data/Nasa/*.xml")
+    list_xmldir_eu = glob.glob("_data/EU/*.xml")
+    list_xmldir_oec = glob.glob("_data/OEC/*.xml")
 
     print("nasa after merge size is :" + str(len(list_xmldir_nasa)), flush=True)
     print("eu after merge size is :" + str(len(list_xmldir_eu)), flush=True)
@@ -232,13 +229,14 @@ def main():
     download_list = ["nasa", "eu", "oec"]
     pool = multiprocessing.Pool(processes=3)
     pool.map(download_database, download_list)
+    pool.close()
 
-    xmltools.ensure_empty_dir("OEC_old")
-    file_list = glob.glob("OEC/*.xml")
+    xmltools.ensure_empty_dir("_data/OEC_old")
+    file_list = glob.glob("_data/OEC/*.xml")
     for next_file in file_list:
-        shutil.copy2(next_file, "OEC_old/")
+        shutil.copy2(next_file, "_data/OEC_old/")
 
-    main()
+    run_merge()
     print("--- %s seconds ---" % (time.time() - start_time), flush=True)
 
 

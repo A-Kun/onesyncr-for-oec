@@ -11,20 +11,20 @@ url_exoplanetarchive = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAP
 
 
 def get():
-    xmltools.ensure_empty_dir("tmp_data/nasa")
-    urllib.request.urlretrieve(url_exoplanetarchive, "tmp_data/nasa/exoplanetarchive.csv")
+    xmltools.ensure_empty_dir("_tmp_data/nasa")
+    urllib.request.urlretrieve(url_exoplanetarchive, "_tmp_data/nasa/exoplanetarchive.csv")
 
 
 def parse():
     # delete old data
-    xmltools.ensure_empty_dir("Nasa")
+    xmltools.ensure_empty_dir("_data/Nasa")
 
     # parse data into default xml format
-    f = open("tmp_data/nasa/exoplanetarchive.csv")
+    f = open("_tmp_data/nasa/exoplanetarchive.csv")
     header = [x.strip() for x in f.readline().split(",")]
     for line in f:
         p = dict(zip(header, [x.strip() for x in line.split(",")]))
-        outputfilename = "Nasa/" + p["pl_hostname"] + ".xml"
+        outputfilename = "_data/Nasa/" + p["pl_hostname"] + ".xml"
         if os.path.exists(outputfilename):
             system = ET.parse(outputfilename).getroot()
             star = system.find(".//star")
@@ -97,4 +97,4 @@ def parse():
 if __name__ == "__main__":
     get()
     parse()
-    print ('Nasa done')
+    print('Nasa done', flush=True)

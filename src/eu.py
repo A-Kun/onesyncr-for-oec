@@ -12,21 +12,21 @@ url_exoplaneteu = "http://exoplanet.eu/catalog/csv/"
 
 
 def get():
-    xmltools.ensure_empty_dir("tmp_data/eu")
-    urllib.request.urlretrieve(url_exoplaneteu, "tmp_data/eu/exoplanet.eu_catalog.csv")
+    xmltools.ensure_empty_dir("_tmp_data/eu")
+    urllib.request.urlretrieve(url_exoplaneteu, "_tmp_data/eu/exoplanet.eu_catalog.csv")
 
 
 def parse():
     # delete old data
-    xmltools.ensure_empty_dir("EU")
+    xmltools.ensure_empty_dir("_data/EU")
 
     # parse data into default xml format
-    f = open("tmp_data/eu/exoplanet.eu_catalog.csv")
+    f = open("_tmp_data/eu/exoplanet.eu_catalog.csv")
     header = [x.strip() for x in f.readline()[1:].replace("# ", "").split(",")]
     reader = csv.reader(f)
     for line in reader:
         p = dict(zip(header, line))
-        outputfilename = "EU/" + p["star_name"].strip() + ".xml"
+        outputfilename = "_data/EU/" + p["star_name"].strip() + ".xml"
         if os.path.exists(outputfilename):
             system = ET.parse(outputfilename).getroot()
             star = system.find(".//star")
@@ -104,4 +104,4 @@ def parse():
 if __name__ == "__main__":
     get()
     parse()
-    print ("EU Done")
+    print("EU Done", flush=True)
