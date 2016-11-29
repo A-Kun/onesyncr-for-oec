@@ -80,7 +80,7 @@
 }
 
 .right-margin {
-	margin-right: 2px;
+	margin-right: 5px;
 }
 
 table, td, th {
@@ -92,7 +92,22 @@ table {
 	width: 75%;
 }
 
-th {
+th, td {
 	height: 50px;
 	text-align: center;
+}
+
+.compare-table {
+	width: 100% !important
+}
+
+.compare-code {
+	vertical-align: top;
+	text-align: left;
+}
+
+#editor {
+	width: 75%;
+	height: 85%;
+	text-align: left;
 }

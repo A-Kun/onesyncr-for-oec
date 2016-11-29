@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Redirect - ONE Syncr</title>
+	<title>Edit - ONE Syncr</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!-- bootstrap starts -->
@@ -16,6 +16,17 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
 <!-- google font ends -->
 
+<!-- jquery starts -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<!-- jquery ends -->
+
+<!-- ace.js starts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.2/require.min.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.3/noconflict/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.3/noconflict/mode-xml.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.3/noconflict/theme-github.js"></script>
+<!-- ace.js ends -->
+
 <!-- custom stylesheet starts -->
 <link rel="stylesheet" href="/static/css/bootstrap-social.css">
 <link rel="stylesheet" href="/static/css/animate.css">
@@ -23,15 +34,21 @@
 <!-- custom stylesheet ends -->
 </head>
 <body class="gradient open-sans">
-	<div class="horizontal-center vertical-golden-ratio animated fadeIn">
-		<h1>Hello, {{ name }} ({{ login }})!</h1>
-		<p class="double-space"><i class="fa fa-cog fa-spin fa-fw right-margin"></i>Redirecting you to the dashboard...</p>
-	</div>
+	<center class="top-margin">
+		<table>
+			<tr>
+				<th><a href="#"><i class="fa fa-check right-margin"></i>Save</th>
+				<th><a href="javascript:window.close()"><i class="fa fa-times right-margin"></i>Cancel</th>
+			</tr>
+		</table>
+		<div id="editor"></div>
+	</center>
 
 	<script>
-		setTimeout(function(){
-			window.location.href = '/dashboard?token={{ token }}';
-		}, 1000);
+	    var editor = ace.edit("editor");
+	    editor.setTheme("ace/theme/github");
+	    editor.getSession().setMode("ace/mode/xml");
+			editor.setValue('{{ file }}');
 	</script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Dashboard - ONE Syncr</title>
+	<title>Report - ONE Syncr</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!-- bootstrap starts -->
@@ -27,12 +27,14 @@
 <!-- custom stylesheet ends -->
 </head>
 <body class="gradient open-sans">
-	<div class="horizontal-right">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" class="fa fa-sign-out left-margin" title="Log out"></a></div>
+	<div class="horizontal-right">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" title="Log out"><i class="fa fa-sign-out left-margin"></i></a></div>
 	<center class="top-margin">
-		<table>
+		<table class="animated fadeInUp">
 			<tr>
+				<th>Status</th>
 				<th>Filename</th>
 				<th>Compare</th>
+				<th>Edit</th>
 				<th>Operation</th>
 			</tr>
 			{{ report }}
@@ -40,6 +42,11 @@
 	</center>
 
 	<script>
+		function accept(file, id) {
+			$.get('/report/accept?file=' + file, function(data) {
+				$('#' + id).html('Accepted');
+			});
+		}
 	</script>
 </body>
 </html>

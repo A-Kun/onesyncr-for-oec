@@ -12,10 +12,10 @@ import oec
 import xml.etree.ElementTree as ET
 
 CURRENT = os.getcwd()
-DESTINATION = os.path.join(CURRENT,'OEC')
-CONFLICT = os.path.join(CURRENT,'push')
-print(DESTINATION, flush=True)
-print(CONFLICT, flush=True)
+DESTINATION = os.path.join(CURRENT,'_data/OEC/')
+CONFLICT = os.path.join(CURRENT,'_/data/push/')
+# print(DESTINATION, flush=True)
+# print(CONFLICT, flush=True)
 
 
 def file_name(dir):
@@ -24,7 +24,7 @@ def file_name(dir):
     :param dir: str
     :return: str
     '''
-    return dir.split('\\')[-1]
+    return dir.split('/')[-1]
 
 
 def has_attrib(ele,attr):
@@ -210,14 +210,17 @@ def run_merge():
 
 def download_database(db):
     if db == "nasa":
+        print('Start downloading Nasa', flush=True)
         nasa.get()
         nasa.parse()
         print('Nasa done', flush=True)
     elif db == "eu":
+        print('Start downloading EU', flush=True)
         eu.get()
         eu.parse()
         print("EU done", flush=True)
     elif db == "oec":
+        print('Start downloading OEC', flush=True)
         oec.get()
         oec.parse()
         print('OEC done', flush=True)
@@ -230,7 +233,8 @@ def main():
     pool = multiprocessing.Pool(processes=3)
     pool.map(download_database, download_list)
     pool.close()
-
+    print("Download complete.", flush=True)
+    xmltools.ensure_empty_dir("_data/push")
     xmltools.ensure_empty_dir("_data/OEC_old")
     file_list = glob.glob("_data/OEC/*.xml")
     for next_file in file_list:
@@ -240,5 +244,23 @@ def main():
     print("--- %s seconds ---" % (time.time() - start_time), flush=True)
 
 
+def check_difference():
+    list_xmldir_oec = glob.glob("_data/OEC/*.xml")
+    result = []
+    for next_file in list_xmldir_oec:
+        try:
+            file_old = open(next_file.replace("_data/OEC/", "_data/OEC_old/"))
+            file_new = open(next_file)
+            if file_old.read() != file_new.read():
+                result.append((next_file, "Modified"))
+            file_old.close()
+            file_new.close()
+
+        except FileNotFoundError:
+            result.append((next_file, "Added"))
+    return result
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    check_difference()

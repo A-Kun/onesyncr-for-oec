@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Redirect - ONE Syncr</title>
+	<title>Compare - ONE Syncr</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!-- bootstrap starts -->
@@ -16,6 +16,16 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
 <!-- google font ends -->
 
+<!-- jquery starts -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<!-- jquery ends -->
+
+<!-- highlight.js starts -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<!-- highlight.js ends -->
+
 <!-- custom stylesheet starts -->
 <link rel="stylesheet" href="/static/css/bootstrap-social.css">
 <link rel="stylesheet" href="/static/css/animate.css">
@@ -23,15 +33,20 @@
 <!-- custom stylesheet ends -->
 </head>
 <body class="gradient open-sans">
-	<div class="horizontal-center vertical-golden-ratio animated fadeIn">
-		<h1>Hello, {{ name }} ({{ login }})!</h1>
-		<p class="double-space"><i class="fa fa-cog fa-spin fa-fw right-margin"></i>Redirecting you to the dashboard...</p>
-	</div>
+	<div class="horizontal-right"><a href="javascript:window.close();"><i class="fa fa-times right-margin"></i>Close</a></div>
+	<center class="top-margin">
+		<table class="compare-table">
+			<tr>
+				<th>Before</th>
+				<th>After</th>
+			</tr>
+			<tr>
+				<td class="compare-code"><pre><code class="xml">{{ old }}</code></pre></td>
+				<td class="compare-code"><pre><code class="xml">{{ new }}</code></pre></td>
+			</tr>
+		</table>
+	</center>
 
-	<script>
-		setTimeout(function(){
-			window.location.href = '/dashboard?token={{ token }}';
-		}, 1000);
-	</script>
+
 </body>
 </html>

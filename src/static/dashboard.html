@@ -27,7 +27,7 @@
 <!-- custom stylesheet ends -->
 </head>
 <body class="gradient open-sans">
-	<div class="horizontal-right animated fadeInRight">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" class="fa fa-sign-out left-margin" title="Log out"></a></div>
+	<div class="horizontal-right">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" title="Log out"><i class="fa fa-sign-out left-margin"></i></a></div>
 	<div class="horizontal-center vertical-golden-ratio top-45 animated fadeIn">
 		<span id="check-btn" class="fa-stack fa-lg fa-10x fa-fw" onclick="checkForUpdate">
 			<i class="fa fa-circle fa-stack-2x"></i>
@@ -46,10 +46,10 @@
 		function checkForUpdate() {
 			refreshIcon.className += ' fa-spin';
 			prompt.innerHTML = 'Checking for update...';
-			$.get("/check?token={{ token }}", function(data) {
+			$.get('/check?token={{ token }}', function(data) {
 				refreshIcon.className = "fa fa-check fa-stack-1x fa-inverse animated bounceIn"
 				checkBtn.removeEventListener('click', checkForUpdate)
-				$("#prompt").html(data);
+				$('#prompt').html('Done. A <a href="/report?token={{ token }}">report</a> has been created.');
 			});
 		}
 	</script>
