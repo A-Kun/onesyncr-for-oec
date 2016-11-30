@@ -2,6 +2,7 @@
 import re
 import requests
 import main
+import xmltools
 from flask import Flask
 from flask import request
 from github3 import login
@@ -75,14 +76,16 @@ def report():
         name = next_file[0].split("/")[-1]
         status = next_file[1]
         if status == "Modified":
-            icon_status = '<i class="fa fa-ellipsis-h" title="' + status + '"></i>'
+            icon_status = '<i class="fa fa-pencil" title="' + status + '"></i>'
         else:
             icon_status = '<i class="fa fa-plus" title="' + status + '"></i>'
         icon_compare = '''<a href="javascript:window.open('/report/compare?file=''' + name + '''');"><i class="fa fa-search"></i></a>'''
-        icon_edit = '''<a href="javascript:window.open('/report/edit?file=''' + name + '''');"><i class="fa fa-pencil"></i></a>'''
+        icon_edit = '''<a href="javascript:window.open('/report/edit?file=''' + name + '''');"><i class="fa fa-pencil-square-o"></i></a>'''
         icon_accept = '''<td id="''' + str(count) + '''"><a href="javascript:accept(''' + "'" + next_file[0] + "'," + str(count) + ''');"><i class="fa fa-check right-margin"></i>Accept</a></td>'''
         html += template.replace("{{ filename }}", name).replace("{{ status }}", icon_status).replace("{{ compare }}", icon_compare).replace("{{ edit }}", icon_edit).replace("{{ operation }}", icon_accept)
         count += 1
+
+    xmltools.ensure_empty_dir("_data/accepted")
 
     return report_page.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token).replace("{{ report }}", html)
 
@@ -97,8 +100,8 @@ def compare():
     file = "_data/OEC/" + file
 
     try:
-        file_old = open(file.replace("_data/OEC/", "_data/OEC_old/"))
-        file_new = open(file)
+        file_old = open(file.replace("_data/OEC/", "_data/OEC_old/"), encoding="utf8")
+        file_new = open(file, encoding="utf8")
         content_old = file_old.read()
         content_new = file_new.read()
         file_old.close()
@@ -106,9 +109,10 @@ def compare():
         compare_page = compare_page.replace("{{ old }}", content_old.replace("<", "&lt;").replace(">", "&gt;"))
         compare_page = compare_page.replace("{{ new }}", content_new.replace("<", "&lt;").replace(">", "&gt;"))
     except FileNotFoundError:
-        file_new = open(file)
+        file_new = open(file, encoding="utf8")
         content_new = file_new.read()
         file_new.close()
+        compare_page = compare_page.replace("{{ old }}", "")
         compare_page = compare_page.replace("{{ new }}", content_new.replace("<", "&lt;").replace(">", "&gt;"))
 
     return compare_page
@@ -116,6 +120,8 @@ def compare():
 
 @app.route("/report/accept", methods=["GET"])
 def accept():
+    file = request.args.get("file")
+    main.accept(file)
     return ""
 
 
@@ -127,11 +133,38 @@ def edit():
 
     file_name = request.args.get("file")
     file_name = "_data/OEC/" + file_name
-    file = open(file_name)
+    file = open(file_name, encoding="utf8")
     file_content = file.read()
     file.close()
 
     return edit_page.replace("{{ file }}", file_content.replace("\n", "\\n"))
+
+
+@app.route("/report/edit/save", methods=["POST"])
+def save():
+    content = request.get_data()
+
+    file_name = request.args.get("file")
+    file = open("_data/OEC/" + file_name, "wb")
+    file.write(content)
+    file.close()
+
+    return ""
+
+
+@app.route("/report/pull-request", methods=["GET"])
+def pull_request():
+    token = request.args.get("token")
+    gh = login(token=token)
+    user = gh.user()
+
+    pull_request_file = open("static/pull-request.html")
+    pull_request_page = pull_request_file.read()
+    pull_request_file.close()
+
+    message = main.create_pull_request(token)
+
+    return pull_request_page.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token).replace("{{ message }}", message)
 
 
 if __name__ == "__main__":

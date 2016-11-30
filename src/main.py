@@ -4,12 +4,17 @@ import os
 import glob
 import shutil
 import threading
+
+import github
+import mail
 import xmltools
 import multiprocessing
 import eu
 import nasa
 import oec
 import xml.etree.ElementTree as ET
+
+from github3 import login
 
 CURRENT = os.getcwd()
 DESTINATION = os.path.join(CURRENT,'_data/OEC/')
@@ -249,8 +254,8 @@ def check_difference():
     result = []
     for next_file in list_xmldir_oec:
         try:
-            file_old = open(next_file.replace("_data/OEC/", "_data/OEC_old/"))
-            file_new = open(next_file)
+            file_old = open(next_file.replace("_data/OEC/", "_data/OEC_old/"), encoding="utf8")
+            file_new = open(next_file, encoding="utf8")
             if file_old.read() != file_new.read():
                 result.append((next_file, "Modified"))
             file_old.close()
@@ -261,6 +266,69 @@ def check_difference():
     return result
 
 
+def accept(file):
+    shutil.copy2(file, "_data/accepted/")
+
+
+def create_pull_request(token):
+    push_list = glob.glob("_data/accepted/*.xml")
+    updated_list = []
+
+    def process_push(next_file):
+        file = open(next_file, encoding="utf8")
+        content = file.read()
+        try:
+            github.push_file(next_file, "Update " + next_file[next_file.find("/") + 1:], content, token)
+        except IndexError:
+            pass
+        else:
+            updated_list.append(next_file[next_file.find("/") + 1:])
+        file.close()
+
+    for next_xml in push_list:
+        process_push(next_xml)
+
+    print("\nDone.", flush=True)
+
+    print("Creating pull request... ", end="", flush=True)
+    try:
+        pr = github.create_pull_request("Update exoplanet systems", token)
+        pr_number = "/" + str(pr.number)
+    except github.github3.models.GitHubError:
+        pr_number = "s/"
+        print("Pull request already exists.", flush=True)
+    else:
+        print("Done.", flush=True)
+
+    gh = login(token=token)
+    user = gh.user()
+
+    pr_url = "https://github.com/" + github.TARGET_USERNAME + "/open_exoplanet_catalogue/pull" + pr_number + "\n"
+    message = 'A <a href="' + pr_url + '" target="_blank">pull request<i class="fa fa-external-link left-margin"></i></a> has been created.'
+
+    if user.email:
+        print("Sending notification email... ", end="", flush=True)
+
+        email_receiver = user.name + " <" + user.email + ">"
+        body = "Hi there,\n\nThe following files were updated:\n\n"
+        for next_file in updated_list:
+            body += "\t" + next_file + "\n"
+
+        body += "\nA pull request has been created: " + pr_url + "\n"
+        mail.send_email(mail.EMAIL_SENDER,
+                        email_receiver,
+                        "Update to Open Exoplanet Catelogue",
+                        body)
+
+        message += "<br>For your record, an email was send to " + user.email + "."
+
+        print("Done.", flush=True)
+        print("An email was sent to " + email_receiver, flush=True)
+    else:
+        print("Public email not set on GitHub.", flush=True)
+
+    return message
+
+
 if __name__ == '__main__':
-    # main()
-    check_difference()
+    main()

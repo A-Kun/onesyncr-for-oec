@@ -35,10 +35,10 @@
 </head>
 <body class="gradient open-sans">
 	<center class="top-margin">
-		<table>
+		<table class="fix-column">
 			<tr>
-				<th><a href="#"><i class="fa fa-check right-margin"></i>Save</th>
-				<th><a href="javascript:window.close()"><i class="fa fa-times right-margin"></i>Cancel</th>
+				<th id="save"><a href="javascript:save();"><i class="fa fa-check right-margin"></i>Save</th>
+				<th><a href="javascript:window.close();"><i class="fa fa-times right-margin"></i>Close</th>
 			</tr>
 		</table>
 		<div id="editor"></div>
@@ -48,7 +48,32 @@
 	    var editor = ace.edit("editor");
 	    editor.setTheme("ace/theme/github");
 	    editor.getSession().setMode("ace/mode/xml");
-			editor.setValue('{{ file }}');
+		editor.setValue('{{ file }}');
+
+		// Read a page's GET URL variables and return them as an associative array.
+		function getUrlVars()
+		{
+		    var vars = [], hash;
+		    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		    for(var i = 0; i < hashes.length; i++)
+		    {
+		        hash = hashes[i].split('=');
+		        vars.push(hash[0]);
+		        vars[hash[0]] = hash[1];
+		    }
+		    return vars;
+		}
+
+		function save() {
+			$("#save").html('<i class="fa fa-cog fa-spin fa-fw right-margin right-margin"></i>Saving...');
+			var editor = ace.edit("editor");
+			var content = editor.getValue();
+			var file = getUrlVars().file;
+
+			$.post( "/report/edit/save?file=" + file, content, function( data ) {
+  				$("#save").html('<a href="javascript:save();"><i class="fa fa-check right-margin animated bounceIn"></i>Saved');
+			}, "text");
+		}
 	</script>
 </body>
 </html>

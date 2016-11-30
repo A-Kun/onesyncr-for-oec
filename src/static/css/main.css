@@ -76,7 +76,7 @@
 }
 
 .left-margin {
-	margin-left: 2px;
+	margin-left: 5px;
 }
 
 .right-margin {
@@ -97,6 +97,14 @@ th, td {
 	text-align: center;
 }
 
+.fix-column {
+	table-layout: fixed;
+}
+
+.hover-table tr:hover {
+	background-color: #EEEEEE;
+}
+
 .compare-table {
 	width: 100% !important
 }
@@ -110,4 +118,19 @@ th, td {
 	width: 75%;
 	height: 85%;
 	text-align: left;
+}
+
+.greyout {
+	color: #CCCCCC;
+}
+
+.fa-sm {
+	font-size: 50%;
+	top: 40px;
+	left: 30px;
+}
+
+.on-top {
+	position: relative;
+	z-index: 10000;
 }
