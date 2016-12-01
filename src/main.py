@@ -292,7 +292,7 @@ def create_pull_request(token):
 
     print("Creating pull request... ", end="", flush=True)
     try:
-        pr = github.create_pull_request("Update exoplanet systems", token)
+        pr = github.create_pull_request("[ONE Syncr] Update exoplanet systems", token)
         pr_number = "/" + str(pr.number)
     except github.github3.models.GitHubError:
         pr_number = "s/"
