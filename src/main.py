@@ -274,19 +274,19 @@ def create_pull_request(token):
     push_list = glob.glob("_data/accepted/*.xml")
     updated_list = []
 
-    def process_push(next_file):
+    def process_push(next_file, destination):
         file = open(next_file, encoding="utf8")
         content = file.read()
         try:
-            github.push_file(next_file, "Update " + next_file[next_file.find("/") + 1:], content, token)
+            github.push_file(destination, "Update " + next_file.split("/")[-1], content, token)
         except IndexError:
             pass
         else:
-            updated_list.append(next_file[next_file.find("/") + 1:])
+            updated_list.append(next_file.split("/")[-1])
         file.close()
 
     for next_xml in push_list:
-        process_push(next_xml)
+        process_push(next_xml, "systems/" + next_xml.split("/")[-1])
 
     print("\nDone.", flush=True)
 
