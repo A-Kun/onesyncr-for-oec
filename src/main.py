@@ -16,11 +16,10 @@ import xml.etree.ElementTree as ET
 
 from github3 import login
 
+
 CURRENT = os.getcwd()
 DESTINATION = os.path.join(CURRENT,'_data/OEC/')
-CONFLICT = os.path.join(CURRENT,'_/data/push/')
-# print(DESTINATION, flush=True)
-# print(CONFLICT, flush=True)
+CONFLICT = os.path.join(CURRENT,'_data/push/')
 
 
 def file_name(dir):
@@ -137,7 +136,7 @@ def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
             else:
                 # the content is not the same then push file to (confict area)
                 if child.text != childOEC.text:
-                    move = True
+                    is_move = True
             # if is a distance tag
             merge(child,childOEC,dirOther,dirOec,root,first,is_move)
         # oec does not have such tag then update
@@ -300,11 +299,13 @@ def create_pull_request(token):
     else:
         print("Done.", flush=True)
 
+    pr_url = "https://github.com/" + github.TARGET_USERNAME + "/open_exoplanet_catalogue/pull" + pr_number
+    return pr_url
+
+
+def send_email(token, updated_list, pr_url):
     gh = login(token=token)
     user = gh.user()
-
-    pr_url = "https://github.com/" + github.TARGET_USERNAME + "/open_exoplanet_catalogue/pull" + pr_number + "\n"
-    message = 'A <a href="' + pr_url + '" target="_blank">pull request<i class="fa fa-external-link left-margin"></i></a> has been created.'
 
     if user.email:
         print("Sending notification email... ", end="", flush=True)
@@ -319,15 +320,9 @@ def create_pull_request(token):
                         email_receiver,
                         "Update to Open Exoplanet Catelogue",
                         body)
-
-        message += "<br>For your record, an email was send to " + user.email + "."
-
-        print("Done.", flush=True)
         print("An email was sent to " + email_receiver, flush=True)
     else:
         print("Public email not set on GitHub.", flush=True)
-
-    return message
 
 
 if __name__ == '__main__':

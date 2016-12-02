@@ -37,13 +37,29 @@
 		<br>
 		<div class="on-top">
 			<div>
-				{{ message }}
+				A <a href="{{ pr_url }}" target="_blank">pull request<i class="fa fa-external-link left-margin"></i></a> has been created.
 			</div>
 			<br>
+			{{ email_button }}
 			<div>
 				<a href="/dashboard?token={{ token }}"><i class="fa fa-repeat right-margin"></i>Start Over</a>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		document.getElementById('check-btn').addEventListener('click', goToPullRequest);
+
+		function sendEmail(email) {
+			$('#email-button').html('<i class="fa fa-cog fa-spin fa-fw right-margin"></i>Sending email receipt...');
+			$.get('/report/email?token={{ token }}', function(data) {
+				$('#email-button').html('<i class="fa fa-check right-margin animated bounceIn"></i>An email was sent to {{ email }} for your record.');
+			});
+		}
+
+		function goToPullRequest() {
+			window.open('{{ pr_url }}');
+		}
+	</script>
 </body>
 </html>

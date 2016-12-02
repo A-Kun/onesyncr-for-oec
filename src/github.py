@@ -42,14 +42,3 @@ def create_pull_request(title, token):
     user = gh.user()
     target_repo = gh.repository(TARGET_USERNAME, "open_exoplanet_catalogue")
     return target_repo.create_pull(title, "master", user.login + ":master")
-
-
-if __name__ == "__main__":
-    # sample calls to functions
-    github_api_base_url = "https://api.github.com/repos/A-Kun/open_exoplanet_catalogue/contents/"
-    QUERY_STRING = "?client_id=56e49d113b3037c709a7&client_secret=aa2f85d97a29ad2c4791af0abd869a24a45eb970"
-    gh = login("A-Kun", token="67a91ee33e366d0576f2136c6e4d7c03e44ee6aa")
-    repo = gh.repository("A-Kun", "open_exoplanet_catalogue")
-    target_repo = gh.repository("poppintk", "open_exoplanet_catalogue")
-    # push_file("testfile.txt", "Test commit", "This is a test file.")
-    # create_pull_request("Test PR (DO NOT MERGE)")

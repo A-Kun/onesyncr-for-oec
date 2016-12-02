@@ -122,6 +122,7 @@ th, td {
 
 .greyout {
 	color: #CCCCCC;
+	cursor: not-allowed;
 }
 
 .fa-sm {

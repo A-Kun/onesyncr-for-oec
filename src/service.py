@@ -1,4 +1,5 @@
 #!flask/bin/python
+import glob
 import re
 import requests
 import main
@@ -34,9 +35,9 @@ def login_redirect():
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
-    dashboard_file = open("static/dashboard.html")
-    dashboard_page = dashboard_file.read()
-    dashboard_file.close()
+    with open("static/dashboard.html") as dashboard_file:
+        dashboard_page = dashboard_file.read()
+
     token = request.args.get("token")
     gh = login(token=token)
     user = gh.user()
@@ -55,9 +56,8 @@ def report():
     gh = login(token=token)
     user = gh.user()
 
-    report_file = open("static/report.html")
-    report_page = report_file.read()
-    report_file.close()
+    with open("static/report.html") as report_file:
+        report_page = report_file.read()
 
     template = """<tr>
     <td>{{ status }}</td>
@@ -92,9 +92,8 @@ def report():
 
 @app.route("/report/compare", methods=["GET"])
 def compare():
-    compare_file = open("static/compare.html")
-    compare_page = compare_file.read()
-    compare_file.close()
+    with open("static/compare.html") as compare_file:
+        compare_page = compare_file.read()
 
     file = request.args.get("file")
     file = "_data/OEC/" + file
@@ -127,15 +126,13 @@ def accept():
 
 @app.route("/report/edit", methods=["GET"])
 def edit():
-    file = open("static/edit.html")
-    edit_page = file.read()
-    file.close()
+    with open("static/edit.html") as file:
+        edit_page = file.read()
 
     file_name = request.args.get("file")
     file_name = "_data/OEC/" + file_name
-    file = open(file_name, encoding="utf8")
-    file_content = file.read()
-    file.close()
+    with open(file_name, encoding="utf8") as file:
+        file_content = file.read()
 
     return edit_page.replace("{{ file }}", file_content.replace("\n", "\\n"))
 
@@ -145,9 +142,8 @@ def save():
     content = request.get_data()
 
     file_name = request.args.get("file")
-    file = open("_data/OEC/" + file_name, "wb")
-    file.write(content)
-    file.close()
+    with open("_data/OEC/" + file_name, "wb") as file:
+        file.write(content)
 
     return ""
 
@@ -157,14 +153,42 @@ def pull_request():
     token = request.args.get("token")
     gh = login(token=token)
     user = gh.user()
+    email = user.email
 
-    pull_request_file = open("static/pull-request.html")
-    pull_request_page = pull_request_file.read()
-    pull_request_file.close()
+    with open("static/pull-request.html") as pull_request_file:
+        pull_request_page = pull_request_file.read()
 
-    message = main.create_pull_request(token)
+    pr_url = main.create_pull_request(token)
 
-    return pull_request_page.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token).replace("{{ message }}", message)
+    with open("_data/accepted/pr", "w") as file:
+        file.write(pr_url)
+
+    email = "" if not email else email
+    if email:
+        email_button = ('''<div id="email-button"><a href="javascript:sendEmail('{{ email }}')">'''
+                        + '''<i class="fa fa-envelope-o right-margin"></i>Send email receipt</a></div><br>''')
+    else:
+        email_button = ('<div id="email-button" class="greyout" title="Your GitHub account does not have a public '
+                        + 'email."><i class="fa fa-envelope-o right-margin"></i>Send email receipt</div><br>')
+
+    return pull_request_page.replace("{{ email_button }}", email_button).replace("{{ name }}", user.name)\
+        .replace("{{ login }}", user.login).replace("{{ email }}", email).replace("{{ token }}", token)\
+        .replace("{{ pr_url }}", pr_url)
+
+
+@app.route("/report/email", methods=["GET"])
+def send_email():
+    token = request.args.get("token")
+
+    file_list = glob.glob("_data/accepted/*.xml")
+    for i in range(len(file_list)):
+        file_list[i] = file_list[i].split("/")[-1]
+
+    with open("_data/accepted/pr", "r") as file:
+        pr_number = file.read()
+
+    main.send_email(token, file_list, pr_number)
+    return ""
 
 
 if __name__ == "__main__":

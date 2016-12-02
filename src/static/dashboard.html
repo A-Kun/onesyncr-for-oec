@@ -49,8 +49,13 @@
 			$.get('/check?token={{ token }}', function(data) {
 				refreshIcon.className = "fa fa-check fa-stack-1x fa-inverse animated bounceIn"
 				checkBtn.removeEventListener('click', checkForUpdate)
+				checkBtn.addEventListener('click', goToReport)
 				$('#prompt').html('Done. A <a href="/report?token={{ token }}">report</a> has been created.');
 			});
+		}
+
+		function goToReport() {
+			window.location.href = '/report?token={{ token }}';
 		}
 	</script>
 </body>
