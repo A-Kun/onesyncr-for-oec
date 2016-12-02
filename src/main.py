@@ -144,8 +144,9 @@ def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
             Eoec.append(child)
     # control only one return
     if(first == 0):
-        # clear indentation in xml
+        # clear indentation in xml and remove empty
         xmltools.indent(Eoec, level=0)
+        xmltools.removeemptytags(Eoec)
         # write to xml directory with all updates
         root.write(dirOec)
 
