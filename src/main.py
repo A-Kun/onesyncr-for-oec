@@ -18,8 +18,8 @@ from github3 import login
 
 
 CURRENT = os.getcwd()
-DESTINATION = os.path.join(CURRENT,'_data/OEC/')
-CONFLICT = os.path.join(CURRENT,'_data/push/')
+DESTINATION = os.path.join(CURRENT, '_data/OEC/')
+CONFLICT = os.path.join(CURRENT, '_data/push/')
 
 
 def file_name(dir):
@@ -40,8 +40,8 @@ def compare_list_dir(other,oec):
     :param other: list of str
     :param oec: list of str
     :return: list of (list of str, dict)
-    Return the new list of list, fist inner list in outer list stores the different
-     filename exist and the second inner list will be same file name
+    Return the new list of list, fist inner list in outer list stores the
+     different filename exist and the second inner list will be same file name.
     '''
 
     dir_maping = {}
@@ -71,7 +71,7 @@ def compare_list_dir(other,oec):
 # oec = ['a','e','t']
 # print(compare_list_dir(other,oec), flush=True)
 
-def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
+def merge(Eother, Eoec, dirOther, dirOec, root, first, is_move):
     '''
     This is function deal with all compare cases
     :param Eother: Element tree
@@ -144,8 +144,7 @@ def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
             Eoec.append(child)
     # control only one return
     if(first == 0):
-        # clear indentation in xml and remove empty
-        xmltools.removeemptytags(Eoec)
+        # clear indentation in xml
         xmltools.indent(Eoec, level=0)
         # write to xml directory with all updates
         root.write(dirOec)
@@ -157,7 +156,8 @@ def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
             except IOError:
                 os.chmod(dirOther, 777)  # ?? still can raise exception
                 shutil.copy(dirOther, CONFLICT)
-    return
+
+        return
 
 
 def merge_two_database(list_third,list_oec):

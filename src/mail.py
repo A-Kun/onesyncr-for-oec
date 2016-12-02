@@ -1,7 +1,7 @@
 import requests
 
 
-API_URL = ("https://api.mailgun.net/v3/andrewwang.ca/messages")
+API_URL = "https://api.mailgun.net/v3/andrewwang.ca/messages"
 API_KEY = "key-8adab74bb944ff2aeb02b29535cde446"
 EMAIL_SENDER = "ONE Syncr <me@andrewwang.ca>"
 

@@ -23,14 +23,18 @@ def login_redirect():
     redirect_page = redirect_file.read()
     redirect_file.close()
     code = request.args.get("code")
-    response = requests.post("https://github.com/login/oauth/access_token?client_id=56e49d113b3037c709a7" +
-                             "&client_secret=aa2f85d97a29ad2c4791af0abd869a24a45eb970&code=" + code)
+    response = requests.post("https://github.com/login/oauth/access_token" +
+                             "?client_id=56e49d113b3037c709a7" +
+                             "&client_secret=aa2f85d97a29ad2c4791af0" +
+                             "abd869a24a45eb970&code=" + code)
     content = response.content.decode()
     match = re.match("access_token=(.+?)&|$", content)
     token = match.group(1)
     gh = login(token=token)
     user = gh.user()
-    return redirect_page.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token)
+    return redirect_page.replace("{{ name }}", user.name)\
+        .replace("{{ login }}", user.login)\
+        .replace("{{ token }}", token)
 
 
 @app.route("/dashboard", methods=["GET"])
@@ -41,7 +45,9 @@ def dashboard():
     token = request.args.get("token")
     gh = login(token=token)
     user = gh.user()
-    return dashboard_page.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token)
+    return dashboard_page.replace("{{ name }}", user.name)\
+        .replace("{{ login }}", user.login)\
+        .replace("{{ token }}", token)
 
 
 @app.route("/check", methods=["GET"])
@@ -79,15 +85,31 @@ def report():
             icon_status = '<i class="fa fa-pencil" title="' + status + '"></i>'
         else:
             icon_status = '<i class="fa fa-plus" title="' + status + '"></i>'
-        icon_compare = '''<a href="javascript:window.open('/report/compare?file=''' + name + '''');"><i class="fa fa-search"></i></a>'''
-        icon_edit = '''<a href="javascript:window.open('/report/edit?file=''' + name + '''');"><i class="fa fa-pencil-square-o"></i></a>'''
-        icon_accept = '''<td id="''' + str(count) + '''"><a href="javascript:accept(''' + "'" + next_file[0] + "'," + str(count) + ''');"><i class="fa fa-check right-margin"></i>Accept</a></td>'''
-        html += template.replace("{{ filename }}", name).replace("{{ status }}", icon_status).replace("{{ compare }}", icon_compare).replace("{{ edit }}", icon_edit).replace("{{ operation }}", icon_accept)
+        icon_compare = '''<a href="javascript:''' +\
+                       '''window.open('/report/compare?file='''\
+                       + name + '''');"><i class="fa fa-search"></i></a>'''
+        icon_edit = '''<a href="javascript:window.open('/report/edit?file='''\
+                    + name + '''');">''' +\
+                    '''<i class="fa fa-pencil-square-o"></i></a>'''
+        icon_accept = '''<td id="''' + str(count) + '''">''' +\
+                      '''<a href="javascript:accept(''' + "'" + next_file[0]\
+                      + "',"\
+                      + str(count) +\
+                      ''');"><i class="fa fa-check right-margin">''' +\
+                      '''</i>Accept</a></td>'''
+        html += template.replace("{{ filename }}", name)\
+            .replace("{{ status }}", icon_status)\
+            .replace("{{ compare }}", icon_compare)\
+            .replace("{{ edit }}", icon_edit)\
+            .replace("{{ operation }}", icon_accept)
         count += 1
 
     xmltools.ensure_empty_dir("_data/accepted")
 
-    return report_page.replace("{{ name }}", user.name).replace("{{ login }}", user.login).replace("{{ token }}", token).replace("{{ report }}", html)
+    return report_page.replace("{{ name }}", user.name)\
+        .replace("{{ login }}", user.login)\
+        .replace("{{ token }}", token)\
+        .replace("{{ report }}", html)
 
 
 @app.route("/report/compare", methods=["GET"])
@@ -99,20 +121,27 @@ def compare():
     file = "_data/OEC/" + file
 
     try:
-        file_old = open(file.replace("_data/OEC/", "_data/OEC_old/"), encoding="utf8")
+        file_old = open(file.replace("_data/OEC/", "_data/OEC_old/"),
+                        encoding="utf8")
         file_new = open(file, encoding="utf8")
         content_old = file_old.read()
         content_new = file_new.read()
         file_old.close()
         file_new.close()
-        compare_page = compare_page.replace("{{ old }}", content_old.replace("<", "&lt;").replace(">", "&gt;"))
-        compare_page = compare_page.replace("{{ new }}", content_new.replace("<", "&lt;").replace(">", "&gt;"))
+        compare_page = compare_page.replace("{{ old }}",
+                                            content_old.replace("<", "&lt;")
+                                            .replace(">", "&gt;"))
+        compare_page = compare_page.replace("{{ new }}",
+                                            content_new.replace("<", "&lt;")
+                                            .replace(">", "&gt;"))
     except FileNotFoundError:
         file_new = open(file, encoding="utf8")
         content_new = file_new.read()
         file_new.close()
         compare_page = compare_page.replace("{{ old }}", "")
-        compare_page = compare_page.replace("{{ new }}", content_new.replace("<", "&lt;").replace(">", "&gt;"))
+        compare_page = compare_page.replace("{{ new }}", content_new
+                                            .replace("<", "&lt;")
+                                            .replace(">", "&gt;"))
 
     return compare_page
 
@@ -165,14 +194,21 @@ def pull_request():
 
     email = "" if not email else email
     if email:
-        email_button = ('''<div id="email-button"><a href="javascript:sendEmail('{{ email }}')">'''
-                        + '''<i class="fa fa-envelope-o right-margin"></i>Send email receipt</a></div><br>''')
+        email_button = ('''<div id="email-button"><a href=''' +
+                        '''"javascript:sendEmail('{{ email }}')">''' +
+                        '''<i class="fa fa-envelope-o right-margin"></i>''' +
+                        '''Send email receipt</a></div><br>''')
     else:
-        email_button = ('<div id="email-button" class="greyout" title="Your GitHub account does not have a public '
-                        + 'email."><i class="fa fa-envelope-o right-margin"></i>Send email receipt</div><br>')
+        email_button = ('<div id="email-button" class="greyout" ' +
+                        'title="Your GitHub account does not have a public ' +
+                        'email."><i class="fa fa-envelope-o right-margin">' +
+                        '</i>Send email receipt</div><br>')
 
-    return pull_request_page.replace("{{ email_button }}", email_button).replace("{{ name }}", user.name)\
-        .replace("{{ login }}", user.login).replace("{{ email }}", email).replace("{{ token }}", token)\
+    return pull_request_page.replace("{{ email_button }}", email_button)\
+        .replace("{{ name }}", user.name)\
+        .replace("{{ login }}", user.login)\
+        .replace("{{ email }}", email)\
+        .replace("{{ token }}", token)\
         .replace("{{ pr_url }}", pr_url)
 
 
