@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>Deliverable #5</title>
+    <style>
+      @import 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.2.0/katex.min.css';
+      @import 'http://dillinger.io/css/app.css';
+
+    </style>
+  </head>
+
+  <body id="preview">
+    <h3>Product Backlog</h3>
+    <img src="images/d5-product-backlog.png">
+    <h3>Release Plan</h3>
+    <img src="images/d5-sprint-backlog.png">
+    <h3>Sprint Backlog</h3>
+    <img src="images/d5-sprint-backlog.png">
+    <h3>Task Board</h3>
+    <h6>Before:</h6>
+    <br>
+    <img src="images/d5-task-board-before.png">
+    <h6>After:</h6>
+    <br>
+    <img src="images/d5-task-board-after.png">
+    <h3>Burn-down Chart</h3>
+    <h6>Before:</h6>
+    <img src="images/d5-burn-down-chart-before.png">
+    <h6>After:</h6>
+    <img src="images/d5-burn-down-chart-after.png">
+    <hr>
+    <h6><a id="Did_you_follow_your_plans_exactly_huh_or_did_you_have_to_replan_Why_and_when_0"></a>Did you follow your plan(s) exactly (huh!), or did you have to re-plan? Why and when?</h6>
+    <p>Before we started coding, we analyzed all of the requirements given by the client and we wrote personas and user stories. During the first week of the project, we achieved the basic functionalities for checking the required databases and getting data
+      from them. We wrote a crawler to crawl data and parse crawled data into dictionaries. We implemented an email sending function which connects to the email server, sends out emails and generates HTML email contents. We also worked on GitHub API to
+      create a pull request to GitHub and pass the URL of the pull request to the email module. Throughout this sprint, we realized that some features are just nice to have, so we lowered the priority of comparing and showing differences between databases.
+      For the next release, since we basically finished the backend, we re-planed to add a user interface into the release. We developed the user interface and also fixed some technical issues like the compare function. Starting from this deliverable,
+      we focused on implementing merge without any bugs and making our front end API work efficiently. We made sure basic features like parsing data and merging from differently formatted data is working completely fine by doing code inspection. Then
+      from there we developed more features like allowing the client to edit the file and also improved the user interface.</p>
+    <h6><a id="What_was_your_estimated_project_velocity_How_did_it_change_with_each_deliverable_2"></a>What was your estimated project velocity? How did it change with each deliverable?</h6>
+    <p>Overall, our project had a smooth transaction from deliverable 2 to deliverable 3. We put our user stories from deliverable 2 into our backlog and had an estimated project velocity of 60 story points (1 story point == 1 dev hour). We followed our
+      plan and finished 39 story points in this sprint and moved the one user story that was not finished into the next sprint. For deliverable 4, the estimated velocity was 56 story points and the actual velocity was 36 story points. We moved two stories
+      to the next. For the last deliverable, we finished all of the planned story points and discarded the lowest priority ones. The estimated velocity was 58 story points, and actual velocity was 51 points.</p>
+    <h6><a id="How_does_the_work_done_for_deliverable_5_compare_to_the_work_on_all_previous_deliverables_both_in_terms_of_progress_and_end_result_4"></a>How does the work done for deliverable 5 compare to the work on all previous deliverables, both in terms of progress and end result?</h6>
+    <p>As mentioned above, compared to all previous deliverables, deliverable 5 was more about code inspection (making sure everything works perfectly) and adding small features. We made good progress by quickly identifying and fixing issues in our project.
+      It resulted in an end product that satisfies the basic requirements and works perfectly. We ended up discarding or simplifying some features that are non-essential, due to time constraints.</p>
+    <h6><a id="Submit_an_updated_description_of_the_system_componets_what_they_are_what_their_responsibilities_are_and_what_are_the_interactions_betwwen_them_6"></a>Submit an updated description of the system componets: what they are, what their responsibilities are, and what are the interactions betwwen them.</h6>
+    <p>The system use browser server structure, there are front end view which directly interact with user. Whenever a user sign in or click on the button, a request will send to server side. Then server take the request and operate business logic and render
+      results to front end page view. The system binding all merge algorithm (A module named <code>main.py</code>) with a HTTP request within server side. All HTTP handler inside <code>service.py</code>. When look for a update, the system will download
+      files from all databases into local file folder first, then <code>merge.py</code> will compare files to files within a different folders. Once the files are merged, ready to make push API call to Github.</p>
+    <h6><a id="Describe_and_explain_any_changes_you_made_8"></a>Describe and explain any changes you made.</h6>
+    <p>We thought about use third party Non-relational database to improve performce, However, after gave a try and we found it is too complicated to implement in such a way. First we need to compare data in dictionary, which make the comparation much harder.
+      Secondly, we need to find a way to convert dictionary to xml and xml to dictionary. Therefore, we come back to original designed and use multithreading module to improve better performance.</p>
+    <hr>
+    <h3><a id="Code_Inspection_11"></a>Code Inspection</h3>
+    <p>Dong You</p>
+    <h6><a id="if_a_bug_how_to_reproduce_14"></a>(if a bug) how to reproduce</h6>
+    <ul>
+      <li>In <code>main.py</code>, we use the recursive call to any children, and set up cases for update. The bug might exists on the cases that we not yet test and cover in all scenarios. The merge function seems to be cause a bit issue while generating
+        some empty tag. When data goes up very large, it is hard to find what cause the issue exactly. Also we found there are some bad data from NASA database while generating xmls. We suggest to come up with better algorithm to ignore the bad data instead
+        actually convert to useless XMLs.</li>
+    </ul>
+    <h6><a id="Bugs_17"></a>Bugs</h6>
+    <ul>
+      <li>Incorrect output, while run our program in the output. Some file with empty tags which not clean up by our cleanup algorithm.</li>
+    </ul>
+    <h6><a id="Poor_code_logic_20"></a>Poor code logic</h6>
+    <ul>
+      <li>Poor code logic in merge</li>
+    </ul>
+    <h6><a id="Poor_coding_style_23"></a>Poor coding style</h6>
+    <ul>
+      <li>Functions/methods too long</li>
+    </ul>
+    <h6><a id="Unreadable_code_26"></a>Unreadable code</h6>
+    <ul>
+      <li>Bad naming</li>
+      <li>Commented out chunks of code</li>
+    </ul>
+    <hr>
+    <p>Name of reviewer: Wentao Sui
+      <br> Code under review: <code>service.py</code>
+      <br> Date of review: Dec. 1, 2016
+      <br> Author of code: Andrew Wang</p>
+    <h6><a id="Bugs_35"></a>Bugs:</h6>
+    <p>Merged exoplanet xml files contain empty tags for attributes that does not contain a value.</p>
+    <h6><a id="Suggestion_for_fix_38"></a>Suggestion for fix:</h6>
+    <p>Clean up all xml files for empty tags after all data has been merged.</p>
+    <h6><a id="Missing_documentation_41"></a>Missing documentation:</h6>
+    <p>Lacking docstrings for several functions.
+      <br> More comments would have been very helpful for peers.</p>
+    <h6><a id="Suggestion_for_fix_45"></a>Suggestion for fix:</h6>
+    <p>Add more comments and docstrings.</p>
+    <hr>
+    <p>Name of reviewer: Andrew Huang
+      <br> Date of review: Nov. 29, 2016
+      <br> Author of code: Andrew Wang</p>
+    <h6><a id="Bugs_52"></a>Bugs:</h6>
+    <ul>
+      <li>After compare file and pull the requests, it save the wrong path, the push path have problem.</li>
+    </ul>
+    <h6><a id="Poor_coding_Style_55"></a>Poor coding Style:</h6>
+    <ul>
+      <li>Few comments on the code</li>
+    </ul>
+    <h6><a id="Suggestion_for_fix_58"></a>Suggestion for fix:</h6>
+    <ul>
+      <li>Try to add more comment before coding</li>
+      <li>Find the wrong push path on the code</li>
+    </ul>
+    <hr>
+    <p>Name of reviewer: Rose Gao
+      <br> Date of review: Nov. 28</p>
+    <h6><a id="Program_efficiency_65"></a>Program efficiency:</h6>
+    <ul>
+      <li>When downloading from different databases, we download files from one database first, then download from the next AFTER this one if finished. This is not efficient because one database needs to stay in the queue for the previous one to finish downloading.</li>
+    </ul>
+    <h6><a id="Suggestion_68"></a>Suggestion:</h6>
+    <ul>
+      <li>Use multithreading to let the program download from multiple databases at the same time.</li>
+    </ul>
+    <h6><a id="Bugs_and_how_to_fix_71"></a>Bug(s) and how to fix:</h6>
+    <ul>
+      <li>In <code>output.py</code>, variable names inconsistent causes the program to crash.</li>
+      <li>Change variable names. Make sure when you refer to the same variable, the name is the same.</li>
+    </ul>
+    <hr>
+    <p>Name of reviewer: Andrew Wang
+      <br> Code under review: <code>main.py</code>
+      <br> Date of review: Nov. 28, 2016
+      <br> Author of code: Dong You</p>
+    <h6><a id="Poor_coding_Style_80"></a>Poor coding Style:</h6>
+    <ul>
+      <li>The following code is considered poor coding style:</li>
+    </ul>
+    <pre><code>def has_attrib(ele,attr):
+    try:
+        ele.attrib[attr]
+        return True
+    except:
+        return False
+</code></pre>
+    <h6><a id="Suggestion_for_fix_91"></a>Suggestion for fix:</h6>
+    <p>Refactor it to the following code:</p>
+    <pre><code>def has_attrib(ele, attr):
+    return attr in ele.attrib
+</code></pre>
+    <hr>
+    <h3>Code Inspection Video</h3>
+    <video width="640" height="480" controls>
+      <source src="images/code-inspection-meeting-d5.mp4" type="video/mp4"> Your browser does not support the video tag.
+    </video>
+  </body>
+
+</html>
