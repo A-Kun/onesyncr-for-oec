@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Dashboard - ONE Syncr</title>
+	<title>Report - ONE Syncr</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!-- bootstrap starts -->
@@ -27,12 +27,26 @@
 <!-- custom stylesheet ends -->
 </head>
 <body class="gradient open-sans">
-	<div class="horizontal-right">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" class="fa fa-sign-out left-margin" title="Log out"></a></div>
+	<div class="horizontal-right">Logged in as {{ name }} ({{ login }})&nbsp;<a href="/" title="Log out"><i class="fa fa-sign-out left-margin"></i></a></div>
 	<center class="top-margin">
-		<table>
+		<table class="animated fadeInUp hover-table">
+			<col width="10%">
+			<col width="40%">
+			<col width="15%">
+			<col width="15%">
+			<col width="20%">
 			<tr>
+				<th id="pull-request" colspan="5">
+					<span class="greyout" title="You need to accept at least one update before creating a pull request.">
+						<i class="fa fa-code-fork right-margin"></i>Create pull request
+					</span>
+				</th>
+			</tr>
+			<tr>
+				<th>Status</th>
 				<th>Filename</th>
 				<th>Compare</th>
+				<th>Edit</th>
 				<th>Operation</th>
 			</tr>
 			{{ report }}
@@ -40,6 +54,18 @@
 	</center>
 
 	<script>
+		function accept(file, id) {
+			$('#' + id).html('<i class="fa fa-cog fa-spin fa-fw right-margin"></i>');
+			$('#pull-request').html('<a href="javascript:sendPullRequest();"><i class="fa fa-code-fork right-margin"></i>Create pull request</a>')
+			$.get('/report/accept?file=' + file, function(data) {
+				$('#' + id).html('Accepted');
+			});
+		}
+
+		function sendPullRequest() {
+			$('#pull-request').html('<i class="fa fa-cog fa-spin fa-fw right-margin right-margin"></i>Creating pull request...');
+			window.location.href = '/report/pull-request?token={{ token }}'
+		}
 	</script>
 </body>
 </html>

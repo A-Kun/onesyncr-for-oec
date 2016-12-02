@@ -4,6 +4,9 @@ import os
 import glob
 import shutil
 import threading
+
+import github
+import mail
 import xmltools
 import multiprocessing
 import eu
@@ -11,11 +14,12 @@ import nasa
 import oec
 import xml.etree.ElementTree as ET
 
+from github3 import login
+
+
 CURRENT = os.getcwd()
-DESTINATION = os.path.join(CURRENT,'OEC')
-CONFLICT = os.path.join(CURRENT,'push')
-print(DESTINATION, flush=True)
-print(CONFLICT, flush=True)
+DESTINATION = os.path.join(CURRENT,'_data/OEC/')
+CONFLICT = os.path.join(CURRENT,'_data/push/')
 
 
 def file_name(dir):
@@ -24,7 +28,7 @@ def file_name(dir):
     :param dir: str
     :return: str
     '''
-    return dir.split('\\')[-1]
+    return dir.split('/')[-1]
 
 
 def has_attrib(ele,attr):
@@ -132,7 +136,7 @@ def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
             else:
                 # the content is not the same then push file to (confict area)
                 if child.text != childOEC.text:
-                    move = True
+                    is_move = True
             # if is a distance tag
             merge(child,childOEC,dirOther,dirOec,root,first,is_move)
         # oec does not have such tag then update
@@ -210,14 +214,17 @@ def run_merge():
 
 def download_database(db):
     if db == "nasa":
+        print('Start downloading Nasa', flush=True)
         nasa.get()
         nasa.parse()
         print('Nasa done', flush=True)
     elif db == "eu":
+        print('Start downloading EU', flush=True)
         eu.get()
         eu.parse()
         print("EU done", flush=True)
     elif db == "oec":
+        print('Start downloading OEC', flush=True)
         oec.get()
         oec.parse()
         print('OEC done', flush=True)
@@ -230,7 +237,8 @@ def main():
     pool = multiprocessing.Pool(processes=3)
     pool.map(download_database, download_list)
     pool.close()
-
+    print("Download complete.", flush=True)
+    xmltools.ensure_empty_dir("_data/push")
     xmltools.ensure_empty_dir("_data/OEC_old")
     file_list = glob.glob("_data/OEC/*.xml")
     for next_file in file_list:
@@ -238,6 +246,83 @@ def main():
 
     run_merge()
     print("--- %s seconds ---" % (time.time() - start_time), flush=True)
+
+
+def check_difference():
+    list_xmldir_oec = glob.glob("_data/OEC/*.xml")
+    result = []
+    for next_file in list_xmldir_oec:
+        try:
+            file_old = open(next_file.replace("_data/OEC/", "_data/OEC_old/"), encoding="utf8")
+            file_new = open(next_file, encoding="utf8")
+            if file_old.read() != file_new.read():
+                result.append((next_file, "Modified"))
+            file_old.close()
+            file_new.close()
+
+        except FileNotFoundError:
+            result.append((next_file, "Added"))
+    return result
+
+
+def accept(file):
+    shutil.copy2(file, "_data/accepted/")
+
+
+def create_pull_request(token):
+    push_list = glob.glob("_data/accepted/*.xml")
+    updated_list = []
+
+    def process_push(next_file, destination):
+        file = open(next_file, encoding="utf8")
+        content = file.read()
+        try:
+            github.push_file(destination, "Update " + next_file.split("/")[-1], content, token)
+        except IndexError:
+            pass
+        else:
+            updated_list.append(next_file.split("/")[-1])
+        file.close()
+
+    for next_xml in push_list:
+        process_push(next_xml, "systems/" + next_xml.split("/")[-1])
+
+    print("\nDone.", flush=True)
+
+    print("Creating pull request... ", end="", flush=True)
+    try:
+        pr = github.create_pull_request("[ONE Syncr] Update exoplanet systems", token)
+        pr_number = "/" + str(pr.number)
+    except github.github3.models.GitHubError:
+        pr_number = "s/"
+        print("Pull request already exists.", flush=True)
+    else:
+        print("Done.", flush=True)
+
+    pr_url = "https://github.com/" + github.TARGET_USERNAME + "/open_exoplanet_catalogue/pull" + pr_number
+    return pr_url
+
+
+def send_email(token, updated_list, pr_url):
+    gh = login(token=token)
+    user = gh.user()
+
+    if user.email:
+        print("Sending notification email... ", end="", flush=True)
+
+        email_receiver = user.name + " <" + user.email + ">"
+        body = "Hi there,\n\nThe following files were updated:\n\n"
+        for next_file in updated_list:
+            body += "\t" + next_file + "\n"
+
+        body += "\nA pull request has been created: " + pr_url + "\n"
+        mail.send_email(mail.EMAIL_SENDER,
+                        email_receiver,
+                        "Update to Open Exoplanet Catelogue",
+                        body)
+        print("An email was sent to " + email_receiver, flush=True)
+    else:
+        print("Public email not set on GitHub.", flush=True)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,79 @@
+<html>
+<head>
+	<title>Edit - ONE Syncr</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<!-- bootstrap starts -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- bootstrap ends -->
+
+<!-- fontawesome starts -->
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<!-- fontawesome ends -->
+
+<!-- google font starts -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+<!-- google font ends -->
+
+<!-- jquery starts -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<!-- jquery ends -->
+
+<!-- ace.js starts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.2/require.min.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.3/noconflict/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.3/noconflict/mode-xml.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.3/noconflict/theme-github.js"></script>
+<!-- ace.js ends -->
+
+<!-- custom stylesheet starts -->
+<link rel="stylesheet" href="/static/css/bootstrap-social.css">
+<link rel="stylesheet" href="/static/css/animate.css">
+<link rel="stylesheet" href="/static/css/main.css">
+<!-- custom stylesheet ends -->
+</head>
+<body class="gradient open-sans">
+	<center class="top-margin">
+		<table class="fix-column">
+			<tr>
+				<th id="save"><a href="javascript:save();"><i class="fa fa-check right-margin"></i>Save</th>
+				<th><a href="javascript:window.close();"><i class="fa fa-times right-margin"></i>Close</th>
+			</tr>
+		</table>
+		<div id="editor"></div>
+	</center>
+
+	<script>
+	    var editor = ace.edit("editor");
+	    editor.setTheme("ace/theme/github");
+	    editor.getSession().setMode("ace/mode/xml");
+		editor.setValue('{{ file }}');
+
+		// Read a page's GET URL variables and return them as an associative array.
+		function getUrlVars()
+		{
+		    var vars = [], hash;
+		    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		    for(var i = 0; i < hashes.length; i++)
+		    {
+		        hash = hashes[i].split('=');
+		        vars.push(hash[0]);
+		        vars[hash[0]] = hash[1];
+		    }
+		    return vars;
+		}
+
+		function save() {
+			$("#save").html('<i class="fa fa-cog fa-spin fa-fw right-margin right-margin"></i>Saving...');
+			var editor = ace.edit("editor");
+			var content = editor.getValue();
+			var file = getUrlVars().file;
+
+			$.post( "/report/edit/save?file=" + file, content, function( data ) {
+  				$("#save").html('<a href="javascript:save();"><i class="fa fa-check right-margin animated bounceIn"></i>Saved');
+			}, "text");
+		}
+	</script>
+</body>
+</html>
