@@ -157,8 +157,7 @@ def merge(Eother, Eoec, dirOther,dirOec,root,first,is_move):
             except IOError:
                 os.chmod(dirOther, 777)  # ?? still can raise exception
                 shutil.copy(dirOther, CONFLICT)
-
-        return
+    return
 
 
 def merge_two_database(list_third,list_oec):
