@@ -34,17 +34,11 @@ def indent(elem, level=0):
 
 # Removes empty nodes from the tree
 def removeemptytags(elem):
-    #print elem
     if elem.text:
         elem.text = elem.text.strip()
     toberemoved = []
     for child in elem:
-        if len(child.attrib) != 0:
-            if 'errorplus' in child.attrib and (child.attrib['errorplus'] == None or child.attrib['errorplus'] == ""):
-                del child.attrib['errorplus']
-            if 'errorminus' in child.attrib and (child.attrib['errorminus'] == None or child.attrib['errorminus'] == ""):
-                del child.attrib['errorminus']
-        if child is None:
+        if len(child) == 0 and child.text is None and len(child.attrib) == 0:
             toberemoved.append(child)
     for child in toberemoved:
         elem.remove(child)
@@ -64,4 +58,8 @@ def removeemptytags(elem):
         del elem.attrib['error']
         elem.attrib['errorminus'] = err
         elem.attrib['errorplus'] = err
-
+    if 'e' in elem.attrib:
+        err = elem.attrib['e']
+        del elem.attrib['e']
+        elem.attrib['errorminus'] = err
+        elem.attrib['errorplus'] = err
