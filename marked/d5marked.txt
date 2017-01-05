@@ -1,0 +1,148 @@
+83
+
+CSCC01 Deliverable 5 Marking Guide
+-----------------------------------
+
+Project Management:  __________ (20%) 19
+
+  Release plan: 2/2
+    - each release corresponds to end of Sprint
+    - project fully laid out:
+      for each release date, list of user stories to implement
+    - project velocity specified and used
+    - highest priority user stories first modulo dependencies
+    - reasonable goals for each release
+  
+  Product Backlog: 2/2
+    - user stories follow the correct format.
+    - user stories, together, reflect all the user requirements (from
+      all personas).
+    - user stories correspond to actual requirements (no "invented"
+      features).
+    - user stories contain enough information for devs to estimate how
+      long it would take to implement it.
+    - each user story addresses one specific requirement (no "world
+      peace" stories).
+
+  Sprint Backlog(s): 4/4
+     - user stories taken from the Product Backlog
+     - estimated costs
+     - estimated values
+
+  Sprint Plan(s): 4/4
+    - user stories divided into tasks when appropriate.
+    - each Sprint Plan contains all the necessary information:
+        who is working on which task on which day 
+    - sum of costs of user stories in the sprint = project velocity
+    - good planning decisions
+
+  Use of Task Board: 2/2
+    - correct format of task boards
+    - snapshots in the begginning and end of each Sprint are provided
+    
+  Use of Burndown Charts: 2/2
+    - snapshots in the begginning and end of each Sprint are provided
+    - correctness of burndown charts
+
+  Use of Repo: 1/2, -1 dependencies not managed w/ pip
+      (including good use of branching from now on!)
+
+  Use of communication tools: 2/2
+     - evidence of using communication tools of their choice effectively
+
+
+Design and Implementation:  __________ (50%) 40
+
+   System Design: 20/25
+      - good modular design, -5 main does too much
+      - general and easy to extend
+      - it is clear how the current implementation is going to be
+        extended should the requirements evolve
+
+   Implementation: 20/25, 
+     - 0 marks if it doesn't run
+     - all of the features are fully implemented, All features were done :)
+     - quality and maturity of code, -5 main.py does too muc
+
+
+Verification and Validation:  __________ (20%) 4
+
+  - quality of unit tests: 0/5, no tests
+    - good coverage
+    - no redundancy
+  - code review activities and outcomes: 4/5
+    - each review follows a checklist (not necessarily the example one, but the same checklist for all) 1
+    - each review is thorough -1
+    - evidence of addressing the outcomes of the review 2
+    - the video demonstrates an effective process used for the review/collection meeting 2
+  - validation activities and outcomes: 0/10
+    - evidence of feedback from the user
+	  - evidence of addressing feedback from the user
+
+
+Report: __________ (10%) 10
+
+  - well-presented, is easy to read and to navigate /2.5
+  - spelling and grammar /2.5
+  - looks professional /2.5
+  - quality of the README file /2.5
+
+Interview: ________ (10%) 10
+CSC C01 - Deliverable 5 Interview Record
+
+Team:
+
+All members present and on time: Yes
+
+
+1) Checkout, build, run [2]:
+
+ Ask for a volunteer to checkout, configure, build, and run the
+ application.
+
+ Team member:
+
+Notes:
+
+Good
+
+2) Demo [2]:
+
+ Ask for a volunteer to demo the application.
+
+ Team member:
+
+Notes:
+
+Was good, had to use python 3.5 to demo. was able to implement data fetching, merging, login w/ github and submitting PRs
+
+3) Project Management [2]:
+
+  Ask for a volunteer to explain any changes to the sprint backlog/plan.
+
+  Team member:
+
+Notes:
+
+Good
+
+4) Code reviews [2]:
+
+  Ask for a volunteer to go over a code review summary for the review
+  of your choice.
+
+  Team member:
+
+Notes:
+
+Okay.
+
+5) Testing and Validation [2]:
+
+  Ask for a volunteer to go over a the testing strategy and all validation activities performed.
+
+  Team member:
+
+Notes:
+
+No validation.
