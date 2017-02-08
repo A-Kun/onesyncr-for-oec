@@ -5,7 +5,7 @@ import github3
 from github3 import login
 
 
-TARGET_USERNAME = "poppintk"
+TARGET_USERNAME = "OpenExoplanetCatalogue"
 QUERY_STRING = "?client_id=56e49d113b3037c709a7&client_secret=" +\
                "aa2f85d97a29ad2c4791af0abd869a24a45eb970"
 
